@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+      <!-- Menu Principal -->
+      <menuitem name="Tour Operation" string="Tour Operation" id="main_menu_touroperator" />
+    </data>
+</openerp>

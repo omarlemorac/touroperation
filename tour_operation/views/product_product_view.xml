@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="touroperator_product_form_view">
+          <field name="name">touroperator.product</field>
+          <field name="model">product.product</field>
+          <field name="priority">6</field>
+          <field name="inherit_id" ref="product.product_normal_form_view" />
+          <field name="arch" type="xml">
+            <field name="type" position="after">
+              <field name="tour_category" />              
+            </field>
+            <field name="list_price" position="after">
+              <field name="sales_commission" />              
+            </field>
+
+            <notebook position="inside">
+
+              <page string="Accommodation" attrs="{'invisible':['|',('tour_category','!=','accommodation')]}">
+                <group>
+                  <group>
+                    <field name="accommodation_location" colspan="2" />
+                    <field name="accommodation_style_id" />
+                    <field name="accommodation_class" />		    
+                    <field name="accommodation_room_type_ids" widget="many2many_tags"/>
+                  </group>
+                  <group>
+                    <field name="accommodation_sharing"/>
+                    <field name="accommodation_capacity" />
+                  </group>
+                </group>		
+              </page>
+              <page string="Cruise" attrs="{'invisible':['|',('tour_category','!=','cruise')]}">
+                  <group>
+                      <group name="style">
+                          <field name="cruise_generic_url" colspan="2" />
+                          <field name="cruise_style_id" />
+                          <field name="cruise_class_id" />
+                          <field name="cruise_cabin_ids" widget="many2many_tags" >
+                              <form string="Cruise Bed Type">
+                                  <field name="name" />
+                                  <field name="description" />
+                              </form>
+                          </field>
+                          <field name="cruise_bed_ids" widget="many2many_tags" />
+                      </group>    
+                      <group name="services">
+                          <field name="cruise_kayak" />
+                          <field name="cruise_snorkelling" />
+                          <field name="cruise_wetsuit" />
+                          <field name="cruise_capacity" />
+                          <field name="cruise_room_sharing" />
+                      </group>
+                  </group>
+              </page>
+              <page string="Lodge" attrs="{'invisible':['|',('tour_category','!=','lodge')]}">                <group>
+                    <group name="style">
+                        <field name="lodge_generic_url" colspan="2" />
+                        <field name="lodge_language_ids" widget="many2many_tags" />
+                        <field name="lodge_class_id" />
+                        <field name="lodge_location" />
+                    </group>    
+                    <group>
+                        <field name="lodge_has_transportation" />
+                        <field name="lodge_room_sharing" />
+                        <field name="lodge_room_type_ids" widget="many2many_tags"/>
+                        <field name="lodge_capacity" />
+                    </group>
+                </group>
+              </page>
+             <page string="Package" attrs="{'invisible':['|',('tour_category','!=','package')]}">                
+                 <group> 
+                      <group name="style">
+                        <field name="package_locations" colspan="2" />
+                        <field name="package_language_ids" widget="many2many_tags" />
+                        <field name="package_class" />
+                        <field name="package_duration" />
+                    </group>    
+                    <group>
+                        <field name="package_is_private" />
+                        <field name="package_has_assistance" />
+                        <field name="itinerary"/>
+                    </group>
+                </group>
+             </page>
+             <page string="Transfer" 
+                    attrs="{'invisible':['|',('tour_category','!=','transfer')]}">                
+                 <group> 
+                      <group name="style">
+                        <field name="transfer_has_assistance" />
+                        <field name="transfer_language_ids" widget="many2many_tags" />
+                    </group>
+                </group>
+             </page>
+            </notebook>
+          </field>
+        </record>
+    </data>
+</openerp>

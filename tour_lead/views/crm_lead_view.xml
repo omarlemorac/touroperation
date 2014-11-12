@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="touroperator_lead_form_view">
+          <field name="name">touroperator.lead</field>
+          <field name="model">crm.lead</field>
+          <field name="priority">25</field>
+          <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor" />
+          <field name="arch" type="xml">
+            <button name="case_mark_won"                                      
+                position="after"                                              
+                >                                                            
+                <button name="%(tour_lead.action_quot_advance_payment_inv)d" string="Tour Quotation" 
+                      type="action"                                               
+                    states="draft,open,pending"                                   
+                      help="Convert to Tour Quotation"                          
+                     class="oe_highlight"/>           
+            </button>
+            <notebook position="inside">
+              <page string="Accommodation">
+                <group>
+                  <group>
+                      <field name="acco_line_ids" nolabel="1">
+                          <form string="Accommodation">
+                              <field name="product_id" colspan="4" on_change="onchange_product_id(product_id)" />
+                              <field name="start_date"/>
+                              <field name="accommodation_room_type_id"/>
+                              <field name="end_date"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="limit_date"/>
+                              <field name="tour_status"/>
+                              <field name="passengers"/>
+                              <field name="agent_commission"/>
+                              <field name="emergency_contact"/>
+                              <!-- <field name="itinerary"/> -->
+                              <field name="observations"/>
+                          </form>
+                          <tree string="Accommodations">
+                              <field name="product_id"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="tour_status"/>
+                          </tree>
+                      </field>
+                  </group>
+                </group>		
+              </page>
+              <page string="Cruise">
+                  <group>
+                      <field name="cruise_line_ids" nolabel="1">
+                          <form string="Cruise">
+                              <field name="product_id" on_change="onchange_product_id(product_id)"/>
+                              <field name="start_date"/>
+                              <field name="end_date"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="limit_date"/>
+                              <field name="tour_status"/>
+                              <field name="passengers"/>
+                              <field name="agent_commission"/>
+                              <field name="emergency_contact"/>
+                              <field name="itinerary"/>
+                              <field name="observations"/>
+                          </form>
+                          <tree string="Cruises">
+                              <field name="product_id"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="tour_status"/>
+                          </tree>
+                      </field>
+                  </group>
+              </page>
+              <page string="Lodge"> 
+                <group>
+                    <group>
+                      <field name="lodge_line_ids" nolabel="1">
+                          <form string="Lodge">
+                              <field name="product_id"/>
+                              <field name="start_date"/>
+                              <field name="end_date"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="limit_date"/>
+                              <field name="tour_status"/>
+                              <field name="passengers"/>
+                              <field name="agent_commission"/>
+                              <field name="emergency_contact"/>
+                              <field name="itinerary"/>
+                              <field name="observations"/>
+                          </form>
+                          <tree string="Lodges">
+                              <field name="product_id"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="tour_status"/>
+                          </tree>
+                      </field>
+                    </group>
+                </group>
+            </page>
+             <page string="Package">                
+                 <group> 
+                      <field name="package_line_ids" nolabel="1">
+                          <form string="Package">
+                              <field name="product_id"/>
+                              <field name="start_date"/>
+                              <field name="end_date"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="limit_date"/>
+                              <field name="tour_status"/>
+                              <field name="passengers"/>
+                              <field name="agent_commission"/>
+                              <field name="emergency_contact"/>
+                              <field name="itinerary"/>
+                              <field name="observations"/>
+                          </form>
+                          <tree string="Packages">
+                              <field name="product_id"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="tour_status"/>
+                          </tree>
+                      </field>
+                </group>
+             </page>
+             <page string="Transfer"> 
+                 <group> 
+                      <field name="transfer_line_ids" nolabel="1">
+                          <form string="Transfer">
+                              <field name="product_id"/>
+                              <field name="start_date"/>
+                              <field name="end_date"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="limit_date"/>
+                              <field name="tour_status"/>
+                              <field name="passengers"/>
+                              <field name="agent_commission"/>
+                              <field name="emergency_contact"/>
+                              <field name="itinerary"/>
+                              <field name="observations"/>
+                          </form>
+                          <tree string="Transfers">
+                              <field name="product_id"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="tour_status"/>
+                          </tree>
+                      </field>
+                </group>
+             </page>
+             <page string="Assistance"> 
+                 <group> 
+                      <field name="assistance_line_ids" nolabel="1">
+                          <form string="Assistance">
+                              <field name="product_id"/>
+                              <field name="start_date"/>
+                              <field name="end_date"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="limit_date"/>
+                              <field name="tour_status"/>
+                              <field name="passengers"/>
+                              <field name="agent_commission"/>
+                              <field name="emergency_contact"/>
+                              <field name="itinerary"/>
+                              <field name="observations"/>
+                          </form>
+                          <tree string="Assistances">
+                              <field name="product_id"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="tour_status"/>
+                          </tree>
+                      </field>
+                </group>
+             </page>
+             <page string="Ticket"> 
+                 <group> 
+                      <field name="fticket_line_ids" nolabel="1">
+                          <form string="Ticket">
+                              <field name="product_id"/>
+                              <field name="start_date"/>
+                              <field name="end_date"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="limit_date"/>
+                              <field name="tour_status"/>
+                              <field name="passengers"/>
+                              <field name="agent_commission"/>
+                              <field name="emergency_contact"/>
+                              <field name="itinerary"/>
+                              <field name="observations"/>
+                          </form>
+                          <tree string="Tickets">
+                              <field name="product_id"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="tour_status"/>
+                          </tree>
+                      </field>
+                </group>
+             </page>
+             <page string="Extra"> 
+                 <group> 
+                      <field name="misc_line_ids" nolabel="1">
+                          <form string="Extra">
+                              <field name="product_id"/>
+                              <field name="start_date"/>
+                              <field name="end_date"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="limit_date"/>
+                              <field name="tour_status"/>
+                              <field name="passengers"/>
+                              <field name="agent_commission"/>
+                              <field name="emergency_contact"/>
+                              <field name="itinerary"/>
+                              <field name="observations"/>
+                          </form>
+                          <tree string="Extra">
+                              <field name="product_id"/>
+                              <field name="cost"/>
+                              <field name="price"/>
+                              <field name="tour_status"/>
+                          </tree>
+                      </field>
+                </group>
+             </page>
+            </notebook>
+          </field>
+        </record>
+    </data>
+</openerp>

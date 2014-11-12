@@ -1,0 +1,14 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+ato_access_package_class_m,package_class_m,"model_tour_package_class",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_lodge_class_m,access_tour_lodge_class_m,"model_tour_lodge_class",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_lodge_room_type_m,access_tour_lodge_room_type_m,"model_tour_lodge_room_type",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_cruise_cabin_m,access_tour_cruise_cabin_m,"model_tour_cruise_cabin",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_cruise_class_m,access_tour_cruise_class_m,"model_tour_cruise_class",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_cruise_style_m,access_tour_cruise_style_m,"model_tour_cruise_style",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_cruise_bed_type_m,access_tour_cruise_bed_type_m,"model_tour_cruise_bed_type",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_accommodation_style_m,access_tour_accommodation_style_m,"model_tour_accommodation_style",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_cabin_type_m,access_tour_cabin_type_m,"model_tour_cabin_type",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_bed_type_m,access_tour_bed_type_m,"model_tour_bed_type",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_language_m,access_tour_language_m,"model_tour_language",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_transportation_m,access_tour_transportation_m,"model_tour_transportation",tour_operation.ato_group_manager,1,1,1,0
+ato_access_tour_accommodation_room_type_m,access_tour_accommodation_room_type_m,"model_tour_accommodation_room_type",tour_operation.ato_group_manager,1,1,1,0

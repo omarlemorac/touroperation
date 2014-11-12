@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="ato_group_manager" model="res.groups">
+            <field name="name">Tour Operation / Manager</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_sale_manager'))]"/>
+        </record>
+    </data>
+</openerp>
