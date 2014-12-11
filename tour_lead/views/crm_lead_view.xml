@@ -63,33 +63,72 @@
                   <page string="Cruise">
                       <group>
                         <group>
-                          <field name="cruise_line_ids" nolabel="1">
-                              <form string="Cruise">
-                                  <field name="product_id" on_change="onchange_product_id(product_id)"/>
-                                  <field name="cruise_generic_url"/>
-                                  <field name="cruise_cabin_id"/>
-                                  <field name="start_date"/>
-                                  <field name="end_date"/>
-                                  <field name="unit_cost"/>
-                                  <field name="unit_price"/>
-                                  <field name="total_line_price"/>
-                                  <field name="limit_date"/>
-                                  <field name="tour_status"/>
-                                  <field name="qtty"/>
-                                  <field name="agent_commission"/>
-                                  <field name="emergency_contact"/>
-                                  <field name="itinerary"/>
-                                  <field name="observations"/>
+                            <field name="cruise_line_ids" nolabel="1">
+                              <form string="Cruise" version="7.0">
+                                  <div class="oe_title">
+                                      <label for="product_id" class="oe_edit_only" />
+                                      <h1>
+                                          <field name="product_id" on_change="onchange_product_id(product_id)"/>
+                                      </h1>
+                                      <field name="cruise_generic_url"/>
+                                  </div>
+                                  <group>
+                                      <group>
+                                          <field name="start_date"/>
+                                          <field name="end_date"/>
+                                          <field name="limit_date"/>
+                                      </group>
+                                      <group>
+                                          <field name="tour_status"/>
+                                          <field name="agent_commission"/>
+                                          <field name="emergency_contact"/>
+                                      </group>
+                                      <notebook colspan="8"> 
+                                          <page string="Itinerary"  >
+                                            <field name="itinerary"/>
+                                          </page>
+                                          <page string="Observations"  >
+                                            <field name="observations"/>
+                                          </page>
+                                          <page string="Prices"  >
+                                              <field name="cruise_tour_sale_orde_price_line_ids">
+                                                    <form string="Price Lines" version="7.0">
+                                                        <field name="cruise_cabin_id"/>
+                                                        <field name="qtty"/>
+                                                        <field name="unit_price"/>
+                                                        <field name="subtotal_price"/>
+                                                        <field name="unit_cost"/>
+                                                        <field name="subtotal_cost"/>
+                                                    </form>
+                                                    <tree string="Price Lines Tree" editable="bottom" >
+                                                        <field name="cruise_cabin_id"/>
+                                                        <field name="qtty"/>
+                                                        <field name="unit_price"/>
+                                                        <field name="subtotal_price"/>
+                                                        <field name="unit_cost"/>
+                                                        <field name="subtotal_cost"/>
+                                                        
+                                                    </tree>
+                                                </field>
+                                            <group class="oe_subtotal_footer oe_right" 
+                                                colspan="2" 
+                                                name="cruise_price_total">
+                                                    <div class="oe_subtotal_footer_separator oe_inline">
+                                                        <label for="cruise_price_total" />
+                                                        <button name="button_dummy"
+                                                             string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                                     </div>
+                                                    <field name="cruise_price_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                                            </group>
+
+                                          </page>
+                                      </notebook>
+                                  </group>
                               </form>
                               <tree string="Cruises">
                                   <field name="product_id"/>
                                   <field name="start_date"/>
                                   <field name="end_date"/>
-                                  <field name="cruise_cabin_id"/>
-                                  <field name="unit_cost"/>
-                                  <field name="unit_price"/>
-                                  <field name="qtty"/>
-                                  <field name="total_line_price"/>
                                   <field name="tour_status"/>
                               </tree>
                           </field>
@@ -99,8 +138,10 @@
                                     <label for="cruise_amount_total" />
                                     <button name="button_dummy"
                                          string="(update)" type="object" class="oe_edit_only oe_link"/>
-                                </div>
+                                 </div>
+                                 <!--
                                 <field name="cruise_amount_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                                -->
                         </group>
                       </group>
                   </page>

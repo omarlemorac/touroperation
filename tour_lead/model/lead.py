@@ -166,10 +166,75 @@ class sale_order_line(osv.Model):
         ['start_date', 'end_date', 'limit_date']),
 
         ]
+
+#Cruise price line
+class cruise_price_line(osv.Model):
+    _name="cruise.tour.sale.orde.price.line"
+
+    def _subtotal_price(self, cr, uid, ids, field, arg, context=None):
+        """Sum price and cost """
+        if not context:
+            context = []
+        st = lambda q, p : q*p
+        price_objs = self.browse(cr, uid, ids, context=context)
+        return {po.id:st(po.qtty, po.unit_price) for po in price_objs}
+
+    def _subtotal_cost(self, cr, uid, ids, field, arg, context=None):
+        """Sum price and cost """
+        if not context:
+            context = []
+        st = lambda q, p : q*p
+        price_objs = self.browse(cr, uid, ids, context=context)
+        return {po.id:st(po.qtty, po.unit_cost) for po in price_objs}
+
+    _columns={
+           'cruise_tour_sale_orde_line_id':fields.many2one("cruise.tour.sale.orde.line",
+               'Order Line'),
+            'cruise_cabin_id':fields.many2one(\
+                "tour.cruise.cabin", 'Cabin Type',
+                 required=True),
+            'unit_price': fields.float('Price', required=True,
+                digits_compute= dp.get_precision('Product Price'),
+                readonly=False ),
+            'unit_cost': fields.float('Cost', required=True,
+                digits_compute= dp.get_precision('Product Cost'),
+                readonly=False ),
+            'qtty': fields.float('Units', required=True,
+                digits_compute= dp.get_precision('Units'),
+                readonly=False ),
+            'subtotal_price':fields.function(_subtotal_price,
+                method=True,
+                type='float',
+                store=False,
+                fnct_inv=None,
+                fnct_search=None, string='Subtotal Price',
+                help='Calculated subtotal price'
+                ),
+            'subtotal_cost':fields.function(_subtotal_cost,
+                method=True,
+                type='float',
+                store=False,
+                fnct_inv=None,
+                fnct_search=None, string='Subtotal Price',
+                help='Calculated subtotal price'
+                ),
+
+            }
 #Cruise
 class cruise_sale_order_line(osv.Model):
     _name="cruise.tour.sale.orde.line"
     _inherit="tour.sale.order.line"
+    def _price_total(self, cr, uid, ids, field, arg, context=None):
+        """Calculates total price from price lines"""
+        cruise_line_obj = self.browse(cr, uid, ids, context=context)
+        res = {}
+        for cruise_line in cruise_line_obj:
+            total_price = 0
+            for price_line in cruise_line.cruise_tour_sale_orde_price_line_ids:
+                total_price += price_line.subtotal_price
+            res[cruise_line.id] = total_price
+        return res
+
     _columns={
             'product_id':fields.many2one('product.product', 'Product',
                 domain=[('tour_category', '=','cruise')], mandatory=True),
@@ -177,9 +242,18 @@ class cruise_sale_order_line(osv.Model):
             'cruise_generic_url':fields.related('product_id',
                 'cruise_generic_url', type='char', string='Generic Website',
                 readonly=True),
-            'cruise_cabin_id':fields.many2one(\
-                "tour.cruise.cabin", 'Cabin Type',
-                 required=True),
+            'cruise_tour_sale_orde_price_line_ids':\
+                    fields.one2many('cruise.tour.sale.orde.price.line',
+                'cruise_tour_sale_orde_line_id', 'Price Lines',
+                help='Add price lines'),
+            'cruise_price_total':fields.function(_price_total,
+                method=True,
+                type='float',
+                store=False,
+                fnct_inv=None,
+                fnct_search=None,
+                string = 'Price total ',
+                help='Total sum of prices'),
             }
 
     def onchange_product_id(self, cr, uid, ids, product, context=None):
@@ -200,6 +274,9 @@ class cruise_sale_order_line(osv.Model):
         res['domain'] = domain
         return {'value':{'unit_price':product_obj.list_price,
             'unit_cost':product_obj.standard_price}}
+
+    def button_dummy(self, cr, uid, ids, context=None):
+        return True
 
 #Lodge
 class lodge_sale_order_line(osv.Model):
