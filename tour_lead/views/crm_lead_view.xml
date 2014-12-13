@@ -254,19 +254,52 @@
              <page string="Ticket"> 
                  <group> 
                       <field name="fticket_line_ids" nolabel="1">
-                          <form string="Ticket">
-                              <field name="product_id"/>
-                              <field name="start_date"/>
-                              <field name="end_date"/>
-                              <field name="unit_cost"/>
-                              <field name="unit_price"/>
-                              <field name="limit_date"/>
-                              <field name="tour_status"/>
-                              <field name="qtty"/>
-                              <field name="agent_commission"/>
-                              <field name="emergency_contact"/>
-                              <field name="itinerary"/>
-                              <field name="observations"/>
+                          <form string="Ticket" version="7.0"> 
+                              <div class="oe_title">
+                                  <label for="product_id" class="oe_edit_only" />
+                                  <h1><field name="product_id"/></h1>
+                              </div>
+                              <group>
+                                  <group>
+                                      <field name="start_date"/>
+                                      <field name="end_date"/>
+                                      <field name="limit_date"/>
+                                      <field name="qtty"/>
+                                      <field name="unit_cost"/>
+                                      <field name="unit_price"/>
+                                  </group>
+                                  <group>
+                                      <field name="tour_status"/>
+                                      <field name="agent_commission"/>
+                                      <field name="emergency_contact"/>
+                                      <field name="itinerary"/>
+                                  </group>
+                              </group>
+                              <notebook colspan="4">
+                                  <page string="Observations">
+                                      <field name="observations"/>
+                                  </page>
+                                  <page string="Ticket information">
+                                      <field name="tour_ticket_info_ids">
+                                          <form string="Ticket Info" version="7.0">
+                                              <field name="ticket_date" />
+                                              <field name="route" />
+                                              <field name="flight"/>
+                                              <field name="airline"/>
+                                              <field name="departure" widget="float_time"/>
+                                              <field name="arrival" widget="float_time"/>
+                                          </form>
+                                          <tree string="Ticket Info" editable="bottom">
+                                              <field name="ticket_date" />
+                                              <field name="route" />
+                                              <field name="flight"/>
+                                              <field name="airline"/>
+                                              <field name="departure" widget="float_time"/>
+                                              <field name="arrival" widget="float_time"/>
+                                          </tree>
+                                      </field>
+                                  </page>
+                              </notebook>
                           </form>
                           <tree string="Tickets">
                               <field name="product_id"/>

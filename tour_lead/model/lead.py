@@ -317,6 +317,10 @@ class ticket_sale_order_line(osv.Model):
     _columns={
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','fticket')]),
             'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+            'tour_ticket_info_ids':fields.one2many('tour.ticket.info',
+                'ticket_tour_sale_orde_line_id', 'Ticket information line',
+                help='Ticket information line'),
+
             }
 #Miscellaneous
 class misc_sale_order_line(osv.Model):
