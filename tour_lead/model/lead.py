@@ -23,9 +23,22 @@ class crm_lead(osv.Model):
         for l in self.browse(cr, uid, ids, context=context):
             val = val1 = 0.0
             for cruise_line in l.cruise_line_ids:
-                val1 += cruise_line.total_line_price
+                if cruise_line.tour_status == "confirmed":
+                    val1 += cruise_line.cruise_price_total
             res[l.id] = val1
         return res
+
+    def _amount_lodge(self, cr, uid, ids, field_name, arg, context=None):
+        cur_obj = self.pool.get('res.currency')
+        res = {}
+        for l in self.browse(cr, uid, ids, context=context):
+            val = val1 = 0.0
+            for lodge_line in l.lodge_line_ids:
+                if lodge_line.tour_status == "confirmed":
+                    val1 += lodge_line.lodge_price_total
+            res[l.id] = val1
+        return res
+
     _columns={
             'acco_line_ids':fields.one2many('accommodation.tour.sale.orde.line',
                 'crm_lead_id','Accommodation'
@@ -56,7 +69,10 @@ class crm_lead(osv.Model):
                 string='Accommodation Amount',type='float', method=True),
             'cruise_amount_total':fields.function(_amount_cruise,
                 digits_compute=dp.get_precision('Account'),
-                string='Cruise Amount',type='float', method=True)
+                string='Cruise Amount',type='float', method=True),
+            'lodge_amount_total':fields.function(_amount_lodge,
+                digits_compute=dp.get_precision('Account'),
+                string='Lodge Amount',type='float', method=True),
             }
 
 
@@ -108,11 +124,7 @@ class sale_order_line(osv.Model):
                 ('option', 'Option'),
                 ('block', 'Block'),
                 ('confirmed', 'Confirmed'),
-                ('confirmed_credit', 'Confirmed Credit'),
-                ('full_payment_confirmed', 'Full payment confirmed'),
                 ('operating', 'Operating'),
-                ('billed', 'Facturado'),
-                ('payment_commission', 'Payment commission'),
                 ('closed', 'Closed'),
                 ('canceled', 'Canceled'),
                 ('not_operated', 'Not operated'),
@@ -167,59 +179,6 @@ class sale_order_line(osv.Model):
 
         ]
 
-#Cruise price line
-class cruise_price_line(osv.Model):
-    _name="cruise.tour.sale.orde.price.line"
-
-    def _subtotal_price(self, cr, uid, ids, field, arg, context=None):
-        """Sum price and cost """
-        if not context:
-            context = []
-        st = lambda q, p : q*p
-        price_objs = self.browse(cr, uid, ids, context=context)
-        return {po.id:st(po.qtty, po.unit_price) for po in price_objs}
-
-    def _subtotal_cost(self, cr, uid, ids, field, arg, context=None):
-        """Sum price and cost """
-        if not context:
-            context = []
-        st = lambda q, p : q*p
-        price_objs = self.browse(cr, uid, ids, context=context)
-        return {po.id:st(po.qtty, po.unit_cost) for po in price_objs}
-
-    _columns={
-           'cruise_tour_sale_orde_line_id':fields.many2one("cruise.tour.sale.orde.line",
-               'Order Line'),
-            'cruise_cabin_id':fields.many2one(\
-                "tour.cruise.cabin", 'Cabin Type',
-                 required=True),
-            'unit_price': fields.float('Price', required=True,
-                digits_compute= dp.get_precision('Product Price'),
-                readonly=False ),
-            'unit_cost': fields.float('Cost', required=True,
-                digits_compute= dp.get_precision('Product Cost'),
-                readonly=False ),
-            'qtty': fields.float('Units', required=True,
-                digits_compute= dp.get_precision('Units'),
-                readonly=False ),
-            'subtotal_price':fields.function(_subtotal_price,
-                method=True,
-                type='float',
-                store=False,
-                fnct_inv=None,
-                fnct_search=None, string='Subtotal Price',
-                help='Calculated subtotal price'
-                ),
-            'subtotal_cost':fields.function(_subtotal_cost,
-                method=True,
-                type='float',
-                store=False,
-                fnct_inv=None,
-                fnct_search=None, string='Subtotal Price',
-                help='Calculated subtotal price'
-                ),
-
-            }
 #Cruise
 class cruise_sale_order_line(osv.Model):
     _name="cruise.tour.sale.orde.line"
@@ -235,6 +194,16 @@ class cruise_sale_order_line(osv.Model):
             res[cruise_line.id] = total_price
         return res
 
+    def _cost_total(self, cr, uid, ids, field, arg, context=None):
+        """Calculates total cost from cost lines"""
+        cruise_line_obj = self.browse(cr, uid, ids, context=context)
+        res = {}
+        for cruise_line in cruise_line_obj:
+            total_cost = 0
+            for cost_line in cruise_line.cruise_tour_sale_orde_price_line_ids:
+                total_cost += cost_line.subtotal_cost
+            res[cruise_line.id] = total_cost
+        return res
     _columns={
             'product_id':fields.many2one('product.product', 'Product',
                 domain=[('tour_category', '=','cruise')], mandatory=True),
@@ -254,6 +223,14 @@ class cruise_sale_order_line(osv.Model):
                 fnct_search=None,
                 string = 'Price total ',
                 help='Total sum of prices'),
+            'cruise_cost_total':fields.function(_cost_total,
+                method=True,
+                type='float',
+                store=False,
+                fnct_inv=None,
+                fnct_search=None,
+                string = 'Cost total ',
+                help='Total sum of costs'),
             }
 
     def onchange_product_id(self, cr, uid, ids, product, context=None):
@@ -282,17 +259,101 @@ class cruise_sale_order_line(osv.Model):
 class lodge_sale_order_line(osv.Model):
     _name="lodge.tour.sale.orde.line"
     _inherit="tour.sale.order.line"
+
+    def _price_total(self, cr, uid, ids, field, arg, context=None):
+        """Calculates total price from price lines"""
+        lodge_line_obj = self.browse(cr, uid, ids, context=context)
+        res = {}
+        for lodge_line in lodge_line_obj:
+            total_price = 0
+            for price_line in lodge_line.lodge_tour_sale_orde_price_line_ids:
+                total_price += price_line.subtotal_price
+            res[lodge_line.id] = total_price
+        return res
+
+    def _cost_total(self, cr, uid, ids, field, arg, context=None):
+        """Calculates total cost from cost lines"""
+        lodge_line_obj = self.browse(cr, uid, ids, context=context)
+        res = {}
+        for lodge_line in lodge_line_obj:
+            total_cost = 0
+            for cost_line in lodge_line.lodge_tour_sale_orde_price_line_ids:
+                total_cost += cost_line.subtotal_cost
+            res[lodge_line.id] = total_cost
+        return res
+
     _columns={
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','lodge')]),
             'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+            'lodge_tour_sale_orde_price_line_ids':fields.one2many('lodge.tour.sale.orde.price.line',
+               'lodge_tour_sale_orde_line_id', 'Price line', help='Price Line'),
+            'lodge_price_total':fields.function(_price_total,
+                method=True,
+                type='float',
+                store=False,
+                fnct_inv=None,
+                fnct_search=None,
+                string = 'Price total ',
+                help='Total sum of prices'),
+            'lodge_cost_total':fields.function(_cost_total,
+                method=True,
+                type='float',
+                store=False,
+                fnct_inv=None,
+                fnct_search=None,
+                string = 'Cost total ',
+                help='Total sum of costs'),
             }
+
+    def button_dummy(self, cr, uid, ids, context=None):
+        return True
 #Package
 class package_sale_order_line(osv.Model):
     _name="package.tour.sale.orde.line"
     _inherit="tour.sale.order.line"
+    def _price_total(self, cr, uid, ids, field, arg, context=None):
+        """Calculates total price from price lines"""
+        lodge_line_obj = self.browse(cr, uid, ids, context=context)
+        res = {}
+        for lodge_line in lodge_line_obj:
+            total_price = 0
+            for price_line in lodge_line.lodge_tour_sale_orde_price_line_ids:
+                total_price += price_line.subtotal_price
+            res[lodge_line.id] = total_price
+        return res
+
+    def _cost_total(self, cr, uid, ids, field, arg, context=None):
+        """Calculates total cost from cost lines"""
+        lodge_line_obj = self.browse(cr, uid, ids, context=context)
+        res = {}
+        for lodge_line in lodge_line_obj:
+            total_cost = 0
+            for cost_line in lodge_line.lodge_tour_sale_orde_price_line_ids:
+                total_cost += cost_line.subtotal_cost
+            res[lodge_line.id] = total_cost
+        return res
     _columns={
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','package')]),
             'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+            'package_tour_sale_orde_price_line_ids':fields.one2many('package.tour.sale.orde.price.line',
+                'package_tour_sale_orde_line_id', 'Price Line', help='Price Lines'),
+            'package_price_total':fields.function(_price_total,
+                method=True,
+                type='float',
+                store=False,
+                fnct_inv=None,
+                fnct_search=None,
+                string = 'Price total ',
+                help='Total sum of prices'),
+            'package_cost_total':fields.function(_cost_total,
+                method=True,
+                type='float',
+                store=False,
+                fnct_inv=None,
+                fnct_search=None,
+                string = 'Cost total ',
+                help='Total sum of costs'),
+
             }
 #Transfer
 class transfer_sale_order_line(osv.Model):
