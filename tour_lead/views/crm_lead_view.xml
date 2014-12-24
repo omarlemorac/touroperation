@@ -284,8 +284,10 @@
                               </form>
                               <tree string="Packages">
                                   <field name="product_id"/>
-                                  <field name="unit_cost"/>
-                                  <field name="unit_price"/>
+                                  <field name="package_cost_total"/>
+                                  <field name="package_price_total"/>
+                                  <field name="start_date"/>
+                                  <field name="end_date"/>
                                   <field name="tour_status"/>
                               </tree>
                           </field>
@@ -312,6 +314,7 @@
                                   <field name="product_id"/>
                                   <field name="unit_cost"/>
                                   <field name="unit_price"/>
+                                  <field name="transfer_total_line_price"/>
                                   <field name="tour_status"/>
                               </tree>
                           </field>

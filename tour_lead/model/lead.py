@@ -313,24 +313,24 @@ class package_sale_order_line(osv.Model):
     _inherit="tour.sale.order.line"
     def _price_total(self, cr, uid, ids, field, arg, context=None):
         """Calculates total price from price lines"""
-        lodge_line_obj = self.browse(cr, uid, ids, context=context)
+        package_line_obj = self.browse(cr, uid, ids, context=context)
         res = {}
-        for lodge_line in lodge_line_obj:
+        for package_line in package_line_obj:
             total_price = 0
-            for price_line in lodge_line.lodge_tour_sale_orde_price_line_ids:
+            for price_line in package_line.package_tour_sale_orde_price_line_ids:
                 total_price += price_line.subtotal_price
-            res[lodge_line.id] = total_price
+            res[package_line.id] = total_price
         return res
 
     def _cost_total(self, cr, uid, ids, field, arg, context=None):
         """Calculates total cost from cost lines"""
-        lodge_line_obj = self.browse(cr, uid, ids, context=context)
+        package_line_obj = self.browse(cr, uid, ids, context=context)
         res = {}
-        for lodge_line in lodge_line_obj:
+        for package_line in package_line_obj:
             total_cost = 0
-            for cost_line in lodge_line.lodge_tour_sale_orde_price_line_ids:
+            for cost_line in package_line.package_tour_sale_orde_price_line_ids:
                 total_cost += cost_line.subtotal_cost
-            res[lodge_line.id] = total_cost
+            res[package_line.id] = total_cost
         return res
     _columns={
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','package')]),
@@ -355,13 +355,30 @@ class package_sale_order_line(osv.Model):
                 help='Total sum of costs'),
 
             }
+    def button_dummy(self, cr, uid, ids, context=None):
+        return True
 #Transfer
 class transfer_sale_order_line(osv.Model):
     _name="transfer.tour.sale.orde.line"
     _inherit="tour.sale.order.line"
+
+    def _total_line_price(self, cr, uid, ids, field_name, arg, context):
+        result = {}
+        lines = self.browse(cr, uid, ids, context)
+        for l in lines:
+            result[l.id] = l.unit_price * l.qtty
+        return result
+
     _columns={
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','transfer')]),
             'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+            'transfer_total_line_price':fields.function(_total_line_price,
+                method=True,
+                store=False,
+                fnct_inv=None,
+                fnct_search=None,
+                string='Total line price', help='Total transfer line price'),
+
             }
 #Assistance
 class assistance_sale_order_line(osv.Model):
