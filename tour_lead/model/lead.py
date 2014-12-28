@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*_
+# -*- coding: utf-7 -*_
 """
 @author: Accioma
 """
@@ -23,8 +23,7 @@ class crm_lead(osv.Model):
         for l in self.browse(cr, uid, ids, context=context):
             val = val1 = 0.0
             for cruise_line in l.cruise_line_ids:
-                if cruise_line.tour_status == "confirmed":
-                    val1 += cruise_line.cruise_price_total
+                val1 += cruise_line.cruise_price_total
             res[l.id] = val1
         return res
 
@@ -34,11 +33,57 @@ class crm_lead(osv.Model):
         for l in self.browse(cr, uid, ids, context=context):
             val = val1 = 0.0
             for lodge_line in l.lodge_line_ids:
-                if lodge_line.tour_status == "confirmed":
-                    val1 += lodge_line.lodge_price_total
+                val1 += lodge_line.lodge_price_total
             res[l.id] = val1
         return res
 
+    def _amount_package(self, cr, uid, ids, field_name, arg, context=None):
+        cur_obj = self.pool.get('res.currency')
+        res = {}
+        for l in self.browse(cr, uid, ids, context=context):
+            val = val1 = 0.0
+            for package_line in l.package_line_ids:
+                val1 += package_line.package_price_total
+            res[l.id] = val1
+        return res
+
+    def _amount_transfer(self, cr, uid, ids, field_name, arg, context=None):
+        cur_obj = self.pool.get('res.currency')
+        res = {}
+        for l in self.browse(cr, uid, ids, context=context):
+            val = val1 = 0.0
+            for transfer_line in l.transfer_line_ids:
+                val1 += transfer_line.subtotal_line_price
+            res[l.id] = val1
+        return res
+
+    def _amount_assistance(self, cr, uid, ids, field_name, arg, context=None):
+        cur_obj = self.pool.get('res.currency')
+        res = {}
+        for l in self.browse(cr, uid, ids, context=context):
+            val = val1 = 0.0
+            for assistance_line in l.assistance_line_ids:
+                val1 += assistance_line.subtotal_line_price
+            res[l.id] = val1
+        return res
+    def _amount_ticket(self, cr, uid, ids, field_name, arg, context=None):
+        cur_obj = self.pool.get('res.currency')
+        res = {}
+        for l in self.browse(cr, uid, ids, context=context):
+            val = val1 = 0.0
+            for ticket_line in l.ticket_line_ids:
+                val1 += ticket_line.subtotal_line_price
+            res[l.id] = val1
+        return res
+    def _amount_msc(self, cr, uid, ids, field_name, arg, context=None):
+        cur_obj = self.pool.get('res.currency')
+        res = {}
+        for l in self.browse(cr, uid, ids, context=context):
+            val = val1 = 0.0
+            for msc_line in l.msc_line_ids:
+                val1 += msc_line.subtotal_line_price
+            res[l.id] = val1
+        return res
     _columns={
             'acco_line_ids':fields.one2many('accommodation.tour.sale.orde.line',
                 'crm_lead_id','Accommodation'
@@ -61,7 +106,10 @@ class crm_lead(osv.Model):
             'assistance_line_ids':fields.one2many('assistance.tour.sale.orde.line',
                 'crm_lead_id','Assistance'
                 ),
-            'misc_line_ids':fields.one2many('misc.tour.sale.orde.line',
+            'ticket_line_ids':fields.one2many('ticket.tour.sale.orde.line',
+                'crm_lead_id','Ticket'
+                ),
+            'msc_line_ids':fields.one2many('misc.tour.sale.orde.line',
                 'crm_lead_id','Miscellaneous'
                 ),
             'acco_amount_total':fields.function(_amount_acco,
@@ -73,6 +121,21 @@ class crm_lead(osv.Model):
             'lodge_amount_total':fields.function(_amount_lodge,
                 digits_compute=dp.get_precision('Account'),
                 string='Lodge Amount',type='float', method=True),
+            'package_amount_total':fields.function(_amount_package,
+                digits_compute=dp.get_precision('Account'),
+                string='Package Amount',type='float', method=True),
+            'transfer_amount_total':fields.function(_amount_transfer,
+                digits_compute=dp.get_precision('Account'),
+                string='Transfer Amount',type='float', method=True),
+            'assistance_amount_total':fields.function(_amount_assistance,
+                digits_compute=dp.get_precision('Account'),
+                string='Assistance Amount',type='float', method=True),
+            'ticket_amount_total':fields.function(_amount_ticket,
+                digits_compute=dp.get_precision('Account'),
+                string='Tticket Amount',type='float', method=True),
+            'msc_amount_total':fields.function(_amount_msc,
+                digits_compute=dp.get_precision('Account'),
+                string='Extra Amount',type='float', method=True),
             }
 
 
@@ -106,19 +169,25 @@ class sale_order_line(osv.Model):
             nigths_stay = self._delta_days(l.end_date, l.start_date)
             result[l.id] = l.unit_price * l.qtty * nigths_stay
         return result
+    def _subtotal_line_price(self, cr, uid, ids, field_name, arg, context):
+        result = {}
+        lines = self.browse(cr, uid, ids, context)
+        for l in lines:
+            result[l.id] = l.unit_price * l.qtty
+        return result
 
 
     _name="tour.sale.order.line"
     _columns={
-            'start_date':fields.date('Start date', required=True),
-            'end_date':fields.date('End date', required=True),
+            'start_date':fields.datetime('Start date', required=True),
+            'end_date':fields.datetime('End date', required=True),
             'unit_price': fields.float('Price', required=True,
                 digits_compute= dp.get_precision('Product Price'),
                 readonly=False ),
             'unit_cost': fields.float('Cost', required=True,
                 digits_compute= dp.get_precision('Product Price'),
                 readonly=False ),
-            'itinerary':fields.text('Itinerary'),
+            'itinerary':fields.html('Itinerary'),
             'tour_status':fields.selection(
                 [
                 ('option', 'Option'),
@@ -141,9 +210,18 @@ class sale_order_line(osv.Model):
                     string='Nigths Stay', method=True),
             'total_line_price':fields.function(_fcn_total_line_price, type='float',
                     string='Total Price', method=True),
+            'subtotal_line_price':fields.function(_subtotal_line_price,
+                method=True,
+                store=False,
+                fnct_inv=None,
+                fnct_search=None,
+                string='Total Price',
+                help='Calculated field of total price qtty*price'),
+
             }
 
     _defaults={
+            'qtty':1,
             'unit_price':0.0,
             'unit_cost':0.0,
             'tour_status':'option',
@@ -334,6 +412,8 @@ class package_sale_order_line(osv.Model):
         return res
     _columns={
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','package')]),
+            'package_itinerary':fields.related('product_id', 'itinerary',
+                string='Itinerary', help='Itenirary for package'),
             'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
             'package_tour_sale_orde_price_line_ids':fields.one2many('package.tour.sale.orde.price.line',
                 'package_tour_sale_orde_line_id', 'Price Line', help='Price Lines'),
@@ -378,7 +458,6 @@ class transfer_sale_order_line(osv.Model):
                 fnct_inv=None,
                 fnct_search=None,
                 string='Total line price', help='Total transfer line price'),
-
             }
 #Assistance
 class assistance_sale_order_line(osv.Model):
@@ -398,7 +477,6 @@ class ticket_sale_order_line(osv.Model):
             'tour_ticket_info_ids':fields.one2many('tour.ticket.info',
                 'ticket_tour_sale_orde_line_id', 'Ticket information line',
                 help='Ticket information line'),
-
             }
 #Miscellaneous
 class misc_sale_order_line(osv.Model):
