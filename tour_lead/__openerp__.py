@@ -5,11 +5,9 @@
 Detailed leads for tour operation
 _____________________________________________
 
-- Manage leads including tour products:
+- Manage tour leads:
   Cruises, accommodations, flight tickets, lodges, transfers, miscellaneous.
-- Tour and Travel categories for products
-- Travel itinerary. TODO:
-- Manage pax (passengers). TODO:
+- Travel itinerary.
 - Sale order creation. TODO:
 - Account invoice integration. TODO:
     """,
@@ -18,10 +16,12 @@ _____________________________________________
     "data":[
         'wizard/quot_advance_payment_inv.xml',
         'views/crm_lead_view.xml',
+        'views/partner_view.xml',
         'security/res_groups.xml',
+        'report/report_opportunity.xml',
         'security/ir.model.access.csv',
            ],
 
-    "depends":["base", "sale", "crm","tour_operation"],
+    "depends":["base", "sale", "crm","report_webkit","tour_operation"],
     "installable":True
 }
