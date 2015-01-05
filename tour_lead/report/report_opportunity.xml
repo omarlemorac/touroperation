@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <report id="tour_option_report" string="Option"
+        model="crm.lead" name="tour.option.report"
+        file="tour_lead/report/option.mako.html" 
+        report_type="webkit"
+        auto="False"/>
+        <!--
+        webkit_header="base_headers_webkit.base_reports_portrait_header"
+        -->
+    </data>
+</openerp>

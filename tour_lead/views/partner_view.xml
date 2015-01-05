@@ -1,0 +1,15 @@
+<openerp>
+  <data>
+    <record id="view_partner_simple_form_ispax" model="ir.ui.view">
+      <field name="name">res.partner.simplified.form.ispax</field>
+      <field name="model">res.partner</field>
+      <field name="type">form</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+        <field name="title" position="after">
+                <field name="is_pax" />
+        </field>
+      </field>
+    </record>
+  </data>
+</openerp>
