@@ -481,6 +481,18 @@
                     </group>
                 </group>
              </page>
+             <page string="Pax"> 
+                 <group>
+                     <field name="paxline_ids" nolabel="1">
+                         <form string="Pax">
+                             <field name="partner_id" />
+                         </form>
+                         <tree string="Pax" editable="bottom">
+                             <field name="partner_id" />
+                         </tree>
+                    </field>
+                 </group>    
+             </page>
             </notebook>
           </field>
         </record>
