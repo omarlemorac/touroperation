@@ -112,7 +112,7 @@ class touoperation_line(osv.Model):
             'msc_line_ids':fields.one2many('misc.tour.sale.orde.line',
                 'tour_id','Miscellaneous'
                 ),
-            'pax_ids':fields.one2many('res.partner', 'lead_pax_id', 'Pax'),
+            'paxline_ids':fields.one2many('tour.lead.paxline', 'tour_lead_id', 'Pax'),
             'acco_amount_total':fields.function(_amount_acco,
                 digits_compute=dp.get_precision('Account'),
                 string='Accommodation Amount',type='float', method=True),
