@@ -1,7 +1,86 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <openerp>
     <data>
+      <!--========================================================
+                    Tour Folio
+      ========================================================-->
+      <record model="ir.ui.view" id="view_tour_folio_tree">
+        <field name="name">tour.folio.tree</field>
+        <field name="model">tour.folio</field>
+        <field name="arch" type="xml">
+          <tree string="Tour">
+            <field name="arrival_date" />
+            <field name="departure_date" />
+            <field name="name" select="1"/>
+            <field name="partner_id"  select="1"/>
+            <field name="date_order" select="1"/>
+            <field name="amount_total" sum="Total amount"/>
+            <field name="state" />
+          </tree>
+        </field>
+      </record>
+        
+      <record model="ir.ui.view" id="view_tour_folio_form">
+        <field name="name">tour.folio.form</field>
+        <field name="model">tour.folio</field>
+        <field name="arch" type="xml">
+          <form string="Folio" version="7.0">
+            <header>
+              <field name="state" widget="statusbar" statusbar_visible="draft,sent,progress,done" statusbar_colors='{"invoice_except":"red","waiting_date":"blue"}'/>
+            </header>
+            <sheet>
+              <div class="oe_title">
+                <div class="oe_edit_only">
+                  <label for="name" string="Reference"/>
+                </div>
+                  <h1><field name="name" placeholder="ReferenceNameX" /></h1>
+              </div>
+              <group>
+                <group>
+                  <field name="partner_id" on_change="onchange_partner_id(partner_id, context)" domain="[('customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'/>
+                  <field domain="[('type','=','sale')]" name="pricelist_id" groups="product.group_sale_pricelist" on_change="onchange_pricelist_id(pricelist_id,order_line)"/>
+                </group>
+                <group>
+                  <field name="partner_invoice_id" groups="sale.group_delivery_invoice_address" context="{'default_type':'invoice'}"/>
+                  <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address" context="{'default_type':'delivery'}"/>
+                </group>
+                <group>
+                  <field name="user_id"/>
+                </group>
+                <group>
+                  <field name="arrival_date"/>
+                  <field name="departure_date"/>
+                </group>
+                <group name="sale_pay">
+                  <field name="payment_term" widget="selection"/>
+                  <field name="fiscal_position" widget="selection"/>
+                  <field name="company_id" 
+                    widget="selection" 
+                    groups="base.group_multi_company"/>
+                </group>
+              </group>
+              <notebook>
+                <page string="Order Lines">
+                  <field name="order_line" />
+                </page>
+              </notebook>
+            </sheet>
+          </form>
+        </field>
+      </record>
       <!-- Menu Principal -->
       <menuitem name="Tour Operation" string="Tour Operation" id="main_menu_touroperator" />
+      <record model="ir.actions.act_window" id="open_tour_folio_form_tree_all">
+        <field name="name">Tour Folio</field>
+        <field name="res_model">tour.folio</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+      </record>
+      <menuitem  id="menu_folio" name="Folio" parent="tour_operation.main_menu_touroperator" sequence="4"/>  			 
+		<menuitem name="Folio"
+				  id="menu_tour_folio_form_tree_all"
+				  action="open_tour_folio_form_tree_all"
+				  sequence="5"
+				  parent ="menu_folio"/>			
     </data>
 </openerp>

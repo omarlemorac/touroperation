@@ -5,8 +5,8 @@
 from openerp.osv import osv, fields
 import openerp.addons.decimal_precision as dp
 
-class crm_lead(osv.Model):
-    _inherit="crm.lead"
+class touoperation_line(osv.Model):
+    _name = 'touroperation.line'
     def _amount_acco(self, cr, uid, ids, field_name, arg, context=None):
         cur_obj = self.pool.get('res.currency')
         res = {}
@@ -84,33 +84,33 @@ class crm_lead(osv.Model):
                 val1 += msc_line.subtotal_line_price
             res[l.id] = val1
         return res
-    _columns={
+    _columns=-
             'acco_line_ids':fields.one2many('accommodation.tour.sale.orde.line',
-                'crm_lead_id','Accommodation'
+                'tour_id','Accommodation'
                 ),
             'cruise_line_ids':fields.one2many('cruise.tour.sale.orde.line',
-                'crm_lead_id','Cruise'
+                'tour_id','Cruise'
                 ),
             'fticket_line_ids':fields.one2many('ticket.tour.sale.orde.line',
-                'crm_lead_id','Ticket'
+                'tour_id','Ticket'
                 ),
             'lodge_line_ids':fields.one2many('lodge.tour.sale.orde.line',
-                'crm_lead_id','Lodge'
+                'tour_id','Lodge'
                 ),
             'package_line_ids':fields.one2many('package.tour.sale.orde.line',
-                'crm_lead_id','Package'
+                'tour_id','Package'
                 ),
             'transfer_line_ids':fields.one2many('transfer.tour.sale.orde.line',
-                'crm_lead_id','Transfer'
+                'tour_id','Transfer'
                 ),
             'assistance_line_ids':fields.one2many('assistance.tour.sale.orde.line',
-                'crm_lead_id','Assistance'
+                'tour_id','Assistance'
                 ),
             'ticket_line_ids':fields.one2many('ticket.tour.sale.orde.line',
-                'crm_lead_id','Ticket'
+                'tour_id','Ticket'
                 ),
             'msc_line_ids':fields.one2many('misc.tour.sale.orde.line',
-                'crm_lead_id','Miscellaneous'
+                'tour_id','Miscellaneous'
                 ),
             'pax_ids':fields.one2many('res.partner', 'lead_pax_id', 'Pax'),
             'acco_amount_total':fields.function(_amount_acco,
@@ -286,7 +286,7 @@ class cruise_sale_order_line(osv.Model):
     _columns={
             'product_id':fields.many2one('product.product', 'Product',
                 domain=[('tour_category', '=','cruise')], mandatory=True),
-            'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+#            'tour_id':fields.many2one('crm.lead', 'Lead'),
             'cruise_generic_url':fields.related('product_id',
                 'cruise_generic_url', type='char', string='Generic Website',
                 readonly=True),
@@ -363,7 +363,7 @@ class lodge_sale_order_line(osv.Model):
 
     _columns={
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','lodge')]),
-            'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+#            'tour_id':fields.many2one('crm.lead', 'Lead'),
             'lodge_tour_sale_orde_price_line_ids':fields.one2many('lodge.tour.sale.orde.price.line',
                'lodge_tour_sale_orde_line_id', 'Price line', help='Price Line'),
             'lodge_price_total':fields.function(_price_total,
@@ -415,7 +415,7 @@ class package_sale_order_line(osv.Model):
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','package')]),
             'package_itinerary':fields.related('product_id', 'itinerary',
                 string='Itinerary', help='Itenirary for package'),
-            'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+#            'tour_id':fields.many2one('crm.lead', 'Lead'),
             'package_tour_sale_orde_price_line_ids':fields.one2many('package.tour.sale.orde.price.line',
                 'package_tour_sale_orde_line_id', 'Price Line', help='Price Lines'),
             'package_price_total':fields.function(_price_total,
@@ -452,7 +452,7 @@ class transfer_sale_order_line(osv.Model):
 
     _columns={
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','transfer')]),
-            'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+#            'tour_id':fields.many2one('crm.lead', 'Lead'),
             'transfer_total_line_price':fields.function(_total_line_price,
                 method=True,
                 store=False,
@@ -466,7 +466,7 @@ class assistance_sale_order_line(osv.Model):
     _inherit="tour.sale.order.line"
     _columns={
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','assistance')]),
-            'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+#            'tour_id':fields.many2one('crm.lead', 'Lead'),
             }
 #Ticket
 class ticket_sale_order_line(osv.Model):
@@ -474,7 +474,7 @@ class ticket_sale_order_line(osv.Model):
     _inherit="tour.sale.order.line"
     _columns={
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','fticket')]),
-            'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+            'tour_id':fields.many2one('crm.lead', 'Lead'),
             'tour_ticket_info_ids':fields.one2many('tour.ticket.info',
                 'ticket_tour_sale_orde_line_id', 'Ticket information line',
                 help='Ticket information line'),
@@ -486,7 +486,7 @@ class misc_sale_order_line(osv.Model):
     _columns={
             'product_id':fields.many2one('product.product', 'Product',
                 domain=[('tour_category', '=','misc')]),
-            'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+#            'tour_id':fields.many2one('crm.lead', 'Lead'),
             }
 #Accommodation
 class accommodation_sale_order_line(osv.Model):
@@ -496,7 +496,7 @@ class accommodation_sale_order_line(osv.Model):
 
     _columns={
             'product_id':fields.many2one('product.product', 'Product', domain=[('tour_category', '=','accommodation')]),
-            'crm_lead_id':fields.many2one('crm.lead', 'Lead'),
+#            'tour_id':fields.many2one('crm.lead', 'Lead'),
             'accommodation_room_type_id':fields.many2one(\
                 "tour.accommodation.room.type", 'Accommodation Type',
                  required=True),
