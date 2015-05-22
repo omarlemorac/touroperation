@@ -12,3 +12,4 @@ ato_access_tour_bed_type_m,access_tour_bed_type_m,"model_tour_bed_type",tour_ope
 ato_access_tour_language_m,access_tour_language_m,"model_tour_language",tour_operation.ato_group_manager,1,1,1,0
 ato_access_tour_transportation_m,access_tour_transportation_m,"model_tour_transportation",tour_operation.ato_group_manager,1,1,1,0
 ato_access_tour_accommodation_room_type_m,access_tour_accommodation_room_type_m,"model_tour_accommodation_room_type",tour_operation.ato_group_manager,1,1,1,0
+access_tour_folio,access_tour_folio,model_tour_folio,tour_operation.ato_group_manager,1,1,1,1

@@ -66,6 +66,14 @@ class tour_folio(osv.osv):
           'tour_policy':fields.selection([('prepaid', 'On Booking'), ('manual',
               'On Check In'), ('picking', 'On Departure')], 'Tour Policy', required=True),
           'duration':fields.float('Duration'),
+          'confirm_date':fields.date('Confirm Date'
+          , help='Date of confirmation'),
+          'payment_date':fields.date('Payment Date'
+          , help='Date of payment'),
+          'paid_date':fields.date('Paid Date'
+          , help='Date of fully paid service '),
+
+
     }
 
     _defaults = {
@@ -75,6 +83,14 @@ class tour_folio(osv.osv):
     _sql_constraints = [
                         ('check_in_out', 'CHECK (arrival_date<=departure_date)', 'Check in Date Should be less than the Check Out Date!'),
                        ]
+
+    def name_get(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
+        res = []
+        for record in self.browse(cr, uid, ids, context=context):
+            res.append((record.id, record.name))
+        return res
 
 
     def onchange_dates(self, cr, uid, ids, arrival_date=False, departure_date=False, duration=False):

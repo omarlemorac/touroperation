@@ -63,6 +63,13 @@
                 <page string="Order Lines">
                   <field name="order_line" />
                 </page>
+                <page string="Limit Dates">
+                  <group>
+                    <field name="confirm_date" />
+                    <field name="payment_date" />
+                    <field name="paid_date" />
+                  </group>
+                </page>
               </notebook>
             </sheet>
           </form>
