@@ -17,6 +17,5 @@ class pax_line(osv.Model):
     _columns = {
             'partner_id':fields.many2one('res.partner', 'Pax',
                 domain=[('is_pax', '=', True)],  help='Add a pax'),
-            'tour_lead_id':fields.many2one('crm.lead', 'Tour Lead',help='Reference to the *tour_lead*'),
             }
 

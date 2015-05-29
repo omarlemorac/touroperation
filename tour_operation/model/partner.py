@@ -24,7 +24,7 @@ class res_partner(osv.Model):
             'clothing_size':fields.selection(
                 [('xs', 'XS'),('s', 'S'),('m', 'M'),('l', 'L'),('xl', 'XL'),
                  ('xxl', 'XXL'),
-                ]
+                ], string = "Clothing Size"
                 , help='Select the passenger clothing size'),
             'dietary_requirements':fields.text('Dietary Requirements'
                 , help='Passenger dietary requirements'),

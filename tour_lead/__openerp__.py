@@ -20,7 +20,7 @@ _____________________________________________
         'security/res_groups.xml',
         'report/report_opportunity.xml',
         'security/ir.model.access.csv',
-           ],
+    ],
 
     "depends":["base", "sale", "crm","report_webkit","tour_operation"],
     "installable":True

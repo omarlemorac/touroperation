@@ -20,6 +20,7 @@ _____________________________________________
             "views/tour_operation_view.xml",
             "views/tourcategories_view.xml",
             "views/product_product_view.xml",
+            "views/partner_view.xml",
            ],
 
     "depends":["base", "sale", "crm"],
