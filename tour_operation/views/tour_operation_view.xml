@@ -63,7 +63,17 @@
                 <page string="Order Lines">
                   <field name="order_line" />
                 </page>
-                <page string="Limit Dates">
+                <page string="Folio Lines">
+                  <field name="tour_folio_line_ids" >
+                      <tree>
+                          <field name="name" />
+                          <field name="option_date" />
+                          <field name="deposit_date" />
+                          <field name="balance_date" />
+                      </tree>
+                  </field>
+                </page>
+                <page string="Deadlines">
                   <group>
                     <field name="confirm_date" />
                     <field name="payment_date" />

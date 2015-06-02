@@ -58,6 +58,50 @@ class tour_folio(osv.osv):
 
     _rec_name = 'order_id'
 
+    def sch_confim_date_fcn(self, cr, uid, ids, field_name, arg, context=None):
+        if context is None:
+            context = {}
+        res = {}
+        tour_folio_obj =  self.browse(cr, uid, ids)
+        for tour_folio in tour_folio_obj:
+            if not tour_folio.confirm_date:
+               res[tour_folio.id] = False
+            else:
+                days =  datetime.timedelta(days = 1)
+                tour_folio_date = datetime.datetime.strptime(
+                        tour_folio.confirm_date, '%Y-%m-%d') - days
+                res[tour_folio.id] = tour_folio_date.strftime('%Y-%m-%d')
+        return res
+
+    def sch_payment_date_fcn(self, cr, uid, ids, field_name, arg, context=None):
+        if context is None:
+            context = {}
+        res = {}
+        tour_folio_obj =  self.browse(cr, uid, ids)
+        for tour_folio in tour_folio_obj:
+            if not tour_folio.payment_date:
+               res[tour_folio.id] = False
+            else:
+                days =  datetime.timedelta(days = 1)
+                tour_folio_date = datetime.datetime.strptime(
+                        tour_folio.payment_date, '%Y-%m-%d') - days
+                res[tour_folio.id] = tour_folio_date.strftime('%Y-%m-%d')
+        return res
+
+    def sch_paid_date_fcn(self, cr, uid, ids, field_name, arg, context=None):
+        if context is None:
+            context = {}
+        res = {}
+        tour_folio_obj =  self.browse(cr, uid, ids)
+        for tour_folio in tour_folio_obj:
+            if not tour_folio.paid_date:
+               res[tour_folio.id] = False
+            else:
+                days =  datetime.timedelta(days = 1)
+                tour_folio_date = datetime.datetime.strptime(
+                        tour_folio.paid_date, '%Y-%m-%d') - days
+                res[tour_folio.id] = tour_folio_date.strftime('%Y-%m-%d')
+        return res
     _columns = {
           'order_id':fields.many2one('sale.order', 'order_id', required=True, ondelete='cascade'),
           'arrival_date': fields.datetime('Arrival', required=True, readonly=True, states={'draft':[('readonly', False)]}),
@@ -66,12 +110,21 @@ class tour_folio(osv.osv):
           'tour_policy':fields.selection([('prepaid', 'On Booking'), ('manual',
               'On Check In'), ('picking', 'On Departure')], 'Tour Policy', required=True),
           'duration':fields.float('Duration'),
-          'confirm_date':fields.date('Confirm Date'
-          , help='Date of confirmation'),
-          'payment_date':fields.date('Payment Date'
-          , help='Date of payment'),
-          'paid_date':fields.date('Paid Date'
-          , help='Date of fully paid service '),
+          'confirm_date':fields.date('Option Date'
+          , help='Deadline for option'),
+          'payment_date':fields.date('Deposit Date'
+          , help='Deadline for deposit'),
+          'paid_date':fields.date('Balance Date'
+          , help='Deadline of fully paid service '),
+          'sch_confirm_date':fields.function(sch_confim_date_fcn
+              , string='Scheduled Option Date'
+              , type='date'),
+          'sch_payment_date':fields.function(sch_payment_date_fcn
+              , string='Scheduled Deposit Date'
+              , type='date'),
+          'sch_paid_date':fields.function(sch_paid_date_fcn
+              , string='Scheduled Balance Date'
+              , type='date'),
 
 
     }
@@ -239,6 +292,10 @@ class tour_folio_line(osv.osv):
           'folio_id':fields.many2one('tour.folio', 'folio_id', ondelete='cascade'),
           'arrival_date': fields.datetime('Arrival', required=True),
           'departure_date': fields.datetime('Departure', required=True),
+          'option_date': fields.date('Option Date', required=True),
+          'deposit_date': fields.date('Deposit Date', required=True),
+          'balance_date': fields.date('Balance Date', required=True),
+
     }
     _defaults = {
        'arrival_date':_get_arrival_date,
