@@ -11,15 +11,20 @@
         </field>
         <notebook position="inside">
           <page string="Passenger info">
-            <group>
-              <field name="passport_number" />            
-              <field name="date_of_birth" />            
-              <field name="shoe_size" />            
-              <field name="clothing_size" />            
-            </group>
-            <group>
-              <field name="dietary_requirements" />            
-              <field name="allergies_medical" />            
+            <group col="2">
+              <group colspan="1">
+                <field name="gender" />            
+                <field name="date_of_birth" />            
+                <field name="wetsuit_size" />            
+              </group>
+              <group colspan="1">
+                <field name="marital_status" />            
+                <field name="nationality_id" />            
+              </group>
+              <group colspan="2">
+                <field name="dietary_requirements" />            
+                <field name="allergies_medical" />            
+              </group>
             </group>
           </page>
         </notebook>

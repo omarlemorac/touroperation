@@ -16,20 +16,28 @@ class res_partner(osv.Model):
     _columns = {
             'is_pax':fields.boolean('Is Passenger?'
                 , help='''Check this field so you can add this contact to list of pax'''),
-            'passport_number':fields.char('Passport Number', 50
-                , help='Passenger passport number'),
             'date_of_birth':fields.date('Date of Birth', help='Date of Birth'),
-            'shoe_size':fields.char('Shoe Size', 10
-                , help='Shoe Size'),
-            'clothing_size':fields.selection(
+            'wetsuit_size':fields.selection(
                 [('xs', 'XS'),('s', 'S'),('m', 'M'),('l', 'L'),('xl', 'XL'),
                  ('xxl', 'XXL'),
-                ], string = "Clothing Size"
-                , help='Select the passenger clothing size'),
+                ], string = "Wetsuit Size"
+                , help='Select the passenger wetsuit size'),
             'dietary_requirements':fields.text('Dietary Requirements'
                 , help='Passenger dietary requirements'),
             'allergies_medical':fields.text('Allergies or Medical Conditions'
                 , help='Allergies or medical conditions'),
+            'marital_status':fields.selection([('single', 'Single'),
+                ('married', 'Married'),('divorced', 'Divorced'),
+                ('widowed', 'Widowed'),('separated', 'Separated'),
+                ('living_common_law', 'Living common law'),
+                ('other', 'Other/Not specified')
+                ], string="Martial Status",
+                help="Choose martial status"),
+            'gender':fields.selection([('m', 'Male'), ('f', 'Female')],
+                string="Gender", help="Passenger gender"),
+            'nationality_id':fields.many2one('res.country', 'Nationality',
+                help='Passenger nationality'),
+
 
             }
 
