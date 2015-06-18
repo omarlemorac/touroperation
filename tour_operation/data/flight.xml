@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <!--====================================================
+						Airport
+		==================================================== -->
+        <record model="touroperation.airport" id="gye_airport_data">
+            <field name="name" >GYE</field>
+            <field name="description" >Jose Joaquin de Olmedo</field>
+        </record>
+        <record model="touroperation.airport" id="uio_airport_data">
+            <field name="name" >UIO</field>
+            <field name="description" >Mariscal Sucre</field>
+        </record>
+        <record model="touroperation.airport" id="scy_airport_data">
+            <field name="name" >SCY</field>
+            <field name="description" >San Cristobal</field>
+        </record>
+        <record model="touroperation.airport" id="gps_airport_data">
+            <field name="name" >GPS</field> 
+            <field name="description" >Seymour</field>
+        </record>
+    </data>
+</openerp>
