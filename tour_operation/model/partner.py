@@ -17,10 +17,7 @@ class res_partner(osv.Model):
             'is_pax':fields.boolean('Is Passenger?'
                 , help='''Check this field so you can add this contact to list of pax'''),
             'date_of_birth':fields.date('Date of Birth', help='Date of Birth'),
-            'wetsuit_size':fields.selection(
-                [('xs', 'XS'),('s', 'S'),('m', 'M'),('l', 'L'),('xl', 'XL'),
-                 ('xxl', 'XXL'),
-                ], string = "Wetsuit Size"
+            'wetsuit_size':fields.char("Wetsuit Size", 100
                 , help='Select the passenger wetsuit size'),
             'dietary_requirements':fields.text('Dietary Requirements'
                 , help='Passenger dietary requirements'),
