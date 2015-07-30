@@ -21,6 +21,7 @@
 from osv import fields, osv
 import time
 import netsvc
+from openerp.tools.translate import _
 #import ir
 from mx import DateTime
 import datetime
@@ -55,6 +56,7 @@ class tour_folio(osv.osv):
     _description = 'tour folio new'
 
     _inherits = {'sale.order':'order_id'}
+    _inherit = ['mail.thread', 'ir.needaction_mixin']
 
     _rec_name = 'order_id'
 
@@ -102,20 +104,51 @@ class tour_folio(osv.osv):
                         tour_folio.paid_date, '%Y-%m-%d') - days
                 res[tour_folio.id] = tour_folio_date.strftime('%Y-%m-%d')
         return res
+
+    def _get_unverified_payment(self, cr, uid, ids, field_name, arg, context=None):
+        if context is None:
+            context = {}
+        res = {}
+        if not ids:
+            return res
+        tour_folio_obj =  self.browse(cr, uid, ids)
+        for tour_folio in tour_folio_obj:
+            amount = 0.0
+            res[tour_folio.id] = {}
+            for payment in tour_folio.folio_uv_customer_payment_ids:
+                amount += payment.amount
+            res[tour_folio.id]['unverified_payment_amount_total'] = amount
+            res[tour_folio.id]['unverified_outstanding_balance'] = \
+              tour_folio.amount_untaxed - amount
+            amount = 0.0
+            for payment in tour_folio.folio_v_customer_payment_ids:
+                amount += payment.amount
+            res[tour_folio.id]['verified_payment_amount_total'] = amount
+            res[tour_folio.id]['verified_outstanding_balance'] = \
+              tour_folio.amount_untaxed - amount
+        return res
+
     _columns = {
           'order_id':fields.many2one('sale.order', 'order_id', required=True, ondelete='cascade'),
           'arrival_date': fields.datetime('Arrival', required=True, readonly=True, states={'draft':[('readonly', False)]}),
           'departure_date': fields.datetime('Departure', required=True, readonly=True, states={'draft':[('readonly', False)]}),
           'tour_folio_line_ids': fields.one2many('tour_folio.line', 'folio_id'),
+          'folio_uv_customer_payment_ids':fields.one2many('tour_folio.customerpayment'
+              , 'folio_id'
+              , help='Register custormer payments for this folio'),
           'tour_policy':fields.selection([('prepaid', 'On Booking'), ('manual',
               'On Check In'), ('picking', 'On Departure')], 'Tour Policy', required=True),
           'duration':fields.float('Duration'),
-          'confirm_date':fields.date('Option Date'
+          'confirm_date':fields.date('Option Date', required=True
           , help='Deadline for option'),
-          'payment_date':fields.date('Deposit Date'
+          'payment_date':fields.date('Deposit Date', required=True
           , help='Deadline for deposit'),
-          'paid_date':fields.date('Balance Date'
+          'paid_date':fields.date('Balance Date', required=True
           , help='Deadline of fully paid service '),
+          'payment_notes' : fields.text('Payment Notes'),
+          'folio_v_customer_payment_ids':fields.one2many('account.voucher', 'folio_id'
+              , 'Advance Payments', help='Advance payments for this folio'
+              , readonly = True),
           'sch_confirm_date':fields.function(sch_confim_date_fcn
               , string='Scheduled Option Date'
               , type='date'),
@@ -125,6 +158,18 @@ class tour_folio(osv.osv):
           'sch_paid_date':fields.function(sch_paid_date_fcn
               , string='Scheduled Balance Date'
               , type='date'),
+          'unverified_payment_amount_total':fields.function(_get_unverified_payment
+              , string='UV Payment', multi=True
+              , type='float'),
+          'unverified_outstanding_balance':fields.function(_get_unverified_payment
+              , string='UV Balance', multi=True
+              , type='float'),
+          'verified_payment_amount_total':fields.function(_get_unverified_payment
+              , string='Verified Payment', multi=True
+              , type='float'),
+          'verified_outstanding_balance':fields.function(_get_unverified_payment
+              , string='Verified Balance', multi=True
+              , type='float'),
 
 
     }
@@ -171,6 +216,7 @@ class tour_folio(osv.osv):
             super(tour_folio, self).write(cr, uid, [folio_id], vals, context)
         else:
             folio_id = super(tour_folio, self).create(cr, uid, vals, context)
+
         return folio_id
 
 
@@ -296,6 +342,8 @@ class tour_folio_line(osv.osv):
           'deposit_date': fields.date('Deposit Date', required=True),
           'balance_date': fields.date('Balance Date', required=True),
 
+
+
     }
     _defaults = {
        'arrival_date':_get_arrival_date,
@@ -357,5 +405,80 @@ class tour_folio_line(osv.osv):
     def copy(self, cr, uid, id, default=None, context={}):
         return  self.pool.get('sale.order.line').copy(cr, uid, id, default=None, context={})
 
+class folio_customer_payment(osv.Model):
+    _name = 'tour_folio.customerpayment'
+    _description = 'Customer payment voucher and notification'
+    _columns = {
+        'name':fields.char('Memo', 256, help='Memo'),
+        'reference':fields.char('Reference', 64, help='Reference'),
+        'folio_id':fields.many2one('tour.folio', 'folio_id', ondelete='cascade'),
+        'payment_date': fields.date('Option Date', required=True),
+        'amount':fields.float('Amount', help='Amount of customer payment'),
+        'journal_id':fields.many2one('account.journal', 'Payment Method',
+            help='Use this payment method'),
+
+    }
+
+    def create(self, cr, uid, vals, context=None, check=True):
+        folio_customer_payment_id = super(folio_customer_payment,
+                self).create(cr,uid,vals,context)
+        invoice_payment_ids = self.pool.get('ir.module.category').search(
+                cr,uid,[('name','=', 'Accounting')], context=None)[0]
+
+        users = self.pool.get('res.groups').browse(cr, uid, invoice_payment_ids,
+                context=None).users
+        recipient_partners = []
+        for user in users:
+            recipient_partners.append((4, user.partner_id.id))
+
+        payment = self.browse(cr, uid, [folio_customer_payment_id])[0]
+        folio = self.pool.get('tour.folio')
+
+        message = _('Se ha registrado un pago por {: .2f} para el {}'.format(
+            payment.amount, payment.payment_date))
+        post_vars = {
+            'subject':'New payment created',
+            'body':message,
+            'partner_ids':recipient_partners,
+        }
+        folio.message_post(cr,uid,[payment.folio_id.id],
+                subtype='mt_comment',
+                context=None,**post_vars)
 
 
+
+#        thread_pool = payment.folio_id.pool.get('mail.thread')
+#        thread_pool.message_post(
+#                cr, uid, [payment.folio_id.id],
+#                type='notification',
+#                subtype='mt_comment',
+#                context=None,
+#                **post_vars)
+
+        return folio_customer_payment_id
+
+class account_voucher(osv.Model):
+    _inherit = 'account.voucher'
+    _columns = {
+        'folio_id':fields.many2one('tour.folio', 'Folio'
+        , help='Referenced Folio'),
+    }
+
+    def write(self, cr, uid, ids, vals, context=None):
+        write_res = super(account_voucher, self).write(cr, uid, ids, vals, context=None)
+        folio_pool = self.pool.get('tour.folio')
+        voucher_obj = self.browse(cr, uid, ids)
+
+        for my_voucher in voucher_obj:
+            folio = my_voucher.folio_id
+            residual = folio.amount_total
+            for voucher in folio.folio_v_customer_payment_ids:
+                if voucher.state == 'posted':
+                    residual -= voucher.amount
+            if residual <= 0:
+                folio_pool.write(cr, uid, [folio.id], {'state':'progress'})
+            elif residual < folio.amount_total:
+                folio_pool.write(cr, uid, [folio.id], {'state':'sent'})
+
+        return write_res
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

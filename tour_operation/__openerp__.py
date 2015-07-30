@@ -23,6 +23,6 @@ _____________________________________________
             "views/partner_view.xml",
            ],
 
-    "depends":["base", "sale", "crm"],
+    "depends":["base", "sale", "l10n_ec_advances"],
     "installable":True
 }
