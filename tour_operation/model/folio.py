@@ -26,6 +26,7 @@ from openerp.tools.translate import _
 from mx import DateTime
 import datetime
 from tools import config
+#import pdb
 
 
 class tour_folio(osv.osv):
@@ -211,6 +212,8 @@ class tour_folio(osv.osv):
 
     def create(self, cr, uid, vals, context=None, check=True):
         vals['order_policy'] = vals.get('tour_policy', 'manual')
+        s = self.pool.get('ir.sequence').get(cr, uid, 'sale.order') or '/'
+        vals['name'] = "{}{}".format(s,vals['name'])
         if not vals.has_key("folio_id"):
             folio_id = super(tour_folio, self).create(cr, uid, vals, context)
             super(tour_folio, self).write(cr, uid, [folio_id], vals, context)
@@ -224,12 +227,15 @@ class tour_folio(osv.osv):
         return  self.pool.get('sale.order').onchange_shop_id(cr, uid, ids, shop_id)
 
     def onchange_partner_id(self, cr, uid, ids, part, context=None):
-        return  self.pool.get('sale.order').onchange_partner_id(cr, uid, ids, part)
+        a =  self.pool.get('sale.order').onchange_partner_id(cr, uid, ids, part)
+        return a
+
 
     def onchange_pricelist_id(self, cr, uid, ids, pricelist_id, order_lines,
             context=None):
         return self.pool.get('sale.order').onchange_pricelist_id(
                                 cr,uid,ids,pricelist_id,order_lines)
+
 
     def button_dummy(self, cr, uid, ids, context={}):
         return  self.pool.get('sale.order').button_dummy(cr, uid, ids, context={})
