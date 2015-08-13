@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <!--====================================================
+						Cruise Class
+		==================================================== -->
+ 
+        <record id="tour_cruise_class_1" model="tour.cruise.class">
+            <field name="description">First Class Cruise</field>
+            <field name="name">First Class</field>
+        </record>
+        <record id="tour_cruise_class_2" model="tour.cruise.class">
+            <field name="description">Deluxe Cruise</field>
+            <field name="name">Deluxe Class</field>
+        </record>
+        <!--====================================================
+						Product Category
+		==================================================== -->
+ 
+        <record id="tour_product_category_1" model="product.category">
+            <field name="parent_id" ref="product.product_category_all"/>
+            <field name="name">Cruise Deluxe Cabin</field>
+        </record>
+        <!--====================================================
+						Product
+		==================================================== -->
+        <record id="tour_product_template_1" model="product.template">
+            <field name="name">M/S Millenium / Deluxe Cabin</field>
+            <field name="categ_id" ref="tour_product_category_1"/>
+            <field name="list_price">4500.0</field>
+            <field name="standard_price">3000.0</field>
+            <field name="type">consu</field>
+            <field name="uom_id" ref="product.product_uom_unit"/>
+            <field name="uom_po_id" ref="product.product_uom_unit"/>
+            <field name="description_sale">M/S Millenium</field>
+            <field name="tour_category">cruise</field>
+            <field name="cruise_class_id" ref="tour_operation.tour_cruise_class_1"/>
+        </record>
+        <record id="tour_product_product_1" model="product.product">
+            <field name="product_tmpl_id" ref="tour_product_template_1"/>
+            <field name="default_code">MILLENIUM</field>
+            <field name="tour_category">cruise</field>
+            <field name="cruise_unbranded_url">www.thebeagle.com.ec</field>
+        </record>
+    </data>
+</openerp>
+

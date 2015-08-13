@@ -54,7 +54,7 @@ class Product(osv.Model):
             help="Choose the style of cruise"
             )
         ,'cruise_capacity':fields.integer("Capacity")
-        ,'cruise_generic_url':fields.char('Generic Website', size=255)
+        ,'cruise_unbranded_url':fields.char('Unbranded Website', size=255)
         ,'cruise_kayak':fields.selection([
             ('inc', 'Included'),
             ('not-inc', 'Not Included'),

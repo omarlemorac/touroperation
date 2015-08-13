@@ -18,10 +18,14 @@ _____________________________________________
     "data":["security/res_groups.xml",
             "security/ir.model.access.csv",
             "views/tour_operation_view.xml",
+            "views/services_view.xml",
             "views/tourcategories_view.xml",
             "views/product_product_view.xml",
             "views/partner_view.xml",
            ],
+    "demo" : [
+        "demo/product_demo.xml",
+        ],
 
     "depends":["base", "sale", "l10n_ec_advances"],
     "installable":True

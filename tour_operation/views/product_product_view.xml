@@ -33,7 +33,7 @@
               <page string="Cruise" attrs="{'invisible':['|',('tour_category','!=','cruise')]}">
                   <group>
                       <group name="style">
-                          <field name="cruise_generic_url" colspan="2" />
+                          <field name="cruise_unbranded_url" colspan="2" widget="url" />
                           <field name="cruise_style_id" />
                           <field name="cruise_class_id" />
                           <field name="cruise_cabin_ids" widget="many2many_tags" >

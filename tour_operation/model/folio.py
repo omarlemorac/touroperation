@@ -142,9 +142,9 @@ class tour_folio(osv.osv):
           'duration':fields.float('Duration'),
           'confirm_date':fields.date('Option Date', required=True
           , help='Deadline for option'),
-          'payment_date':fields.date('Deposit Date', required=True
+          'payment_date':fields.date('Deposit Date', required=False
           , help='Deadline for deposit'),
-          'paid_date':fields.date('Balance Date', required=True
+          'paid_date':fields.date('Balance Date', required=False
           , help='Deadline of fully paid service '),
           'payment_notes' : fields.text('Payment Notes'),
           'folio_v_customer_payment_ids':fields.one2many('account.voucher', 'folio_id'

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <!--========================================================
+                  Tour Services
+    ========================================================-->
+    <record model="ir.ui.view" id="view_tour_service_tree">
+      <field name="name">tour.service.tree</field>
+      <field name="model">tour.service</field>
+      <field name="arch" type="xml">
+        <tree string="Services">
+          <field name="folio_id" />
+        </tree>
+      </field>
+    </record>
+      
+    <record model="ir.ui.view" id="view_tour_service_form">
+      <field name="name">tour.service.form</field>
+      <field name="model">tour.service</field>
+      <field name="arch" type="xml">
+        <form string="service" version="7.0">
+          <sheet>
+            <div class="oe_title">
+              <div class="oe_edit_only">
+                <label for="folio_id" string="Folio"/>
+              </div>
+                <h1><field name="folio_id" /></h1>
+            </div>
+            <notebook>
+              <page string="Cruise">
+                <group>
+                  <group>
+                    <field name="cruise_line_ids" nolabel="1" >
+                      <tree string="Cruises">
+                        <field name="product_id"/>
+                        <field name="name"/>
+                        <field name="product_uom_qty"/>
+                        <field name="price_unit"/>
+                        <field name="price_subtotal"/>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                      </tree>
+                    </field>
+                  </group>  
+                </group>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+
+    <!--========================================================
+                  Tour Services Action-Menu
+    ========================================================-->
+
+
+    <menuitem  id="menu_tour_service_up" name="Services" 
+      parent="tour_operation.main_menu_touroperator" sequence="6"/>  			 
+
+    <record model="ir.actions.act_window" id="open_tour_service_form_tree">
+      <field name="name">Services</field>
+      <field name="res_model">tour.service</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+		<menuitem name="Services"
+				  id="menu_tour_service_form_tree"
+				  action="open_tour_service_form_tree"
+				  sequence="5"
+				  parent ="menu_tour_service_up"/>			
+  </data>
+</openerp>
+

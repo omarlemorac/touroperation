@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <openerp>
+            <data>
+                <record model="ir.ui.view" id="touroperator_lead_form_view">
+                  <field name="name">touroperator.lead</field>
+                  <field name="model">crm.lead</field>
+                  <field name="priority">25</field>
+                  <field name="inherit_id" ref="sale_crm.crm_case_form_view_oppor" />
+                  <field name="arch" type="xml">
+                    <button name="case_mark_won"                                      
+                        position="after"                                              
+                        >                                                            
+                        <button name="%(tour_lead.action_quot_advance_payment_inv)d" string="Tour Quotation" 
+                              type="action"                                               
+                            states="draft,open,pending"                                   
+                              help="Convert to Tour Quotation"                          
+                             class="oe_highlight"/>           
+                    </button>
+                    <notebook position="inside">
+                      <page string="Accommodation">
+                        <group>
+                          <group>
+                              <field name="acco_line_ids" nolabel="1">
+                                  <form string="Accommodation">
+                                      <field name="product_id" colspan="4" on_change="onchange_product_id(product_id)" />
+                                      <field name="start_date"/>
+                                      <field name="accommodation_room_type_id"/>
+                                      <field name="end_date"/>
+                                      <field name="nigths_stay"/>
+                                      <field name="unit_cost"/>
+                                      <field name="unit_price"/>
+                                      <field name="total_line_price"/>
+                                      <field name="limit_date"/>
+                                      <field name="tour_status"/>
+                                      <field name="qtty"/>
+                                      <field name="agent_commission"/>
+                                      <field name="emergency_contact"/>
+                                      <!-- <field name="itinerary"/> -->
+                                      <field name="observations" widget="html"/>
+                                  </form>
+                                  <tree string="Accommodations">
+                                      <field name="product_id"/>
+                                      <field name="start_date"/>
+                                      <field name="end_date"/>
+                                      <field name="unit_cost"/>
+                                      <field name="unit_price"/>
+                                      <field name="qtty"/>
+                                      <field name="total_line_price"/>
+                                      <field name="tour_status"/>
+                                  </tree>
+                              </field>
+                          </group>
+                          <group class="oe_subtotal_footer oe_right" colspan="2" name="acco_sale_total">
+                                <div class="oe_subtotal_footer_separator oe_inline">
+                                    <label for="acco_amount_total" />
+                                    <button name="button_dummy"
+                                         string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                </div>
+                                <field name="acco_amount_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                      </group>
+                    </group>		
+                  </page>
+                  <page string="Cruise">
+                      <group>
+                        <group>
+                            <field name="cruise_line_ids" nolabel="1">
+                              <form string="Cruise" version="7.0">
+                                  <div class="oe_title">
+                                      <label for="product_id" class="oe_edit_only" />
+                                      <h1>
+                                          <field name="product_id" on_change="onchange_product_id(product_id)"/>
+                                      </h1>
+                                      <field name="cruise_generic_url"/>
+                                  </div>
+                                  <group>
+                                      <group>
+                                          <field name="start_date"/>
+                                          <field name="end_date"/>
+                                          <field name="limit_date"/>
+                                      </group>
+                                      <group>
+                                          <field name="tour_status"/>
+                                          <field name="agent_commission"/>
+                                          <field name="emergency_contact"/>
+                                      </group>
+                                      <notebook colspan="8"> 
+                                          <page string="Itinerary"  >
+                                            <field name="itinerary" widget="html"/>
+                                          </page>
+                                          <page string="Observations"  >
+                                            <field name="observations"/>
+                                          </page>
+                                          <page string="Prices"  >
+                                              <field name="cruise_tour_sale_orde_price_line_ids">
+                                                    <form string="Price Lines" version="7.0">
+                                                        <field name="cruise_cabin_id"/>
+                                                        <field name="qtty"/>
+                                                        <field name="unit_price"/>
+                                                        <field name="subtotal_price"/>
+                                                        <field name="unit_cost"/>
+                                                        <field name="subtotal_cost"/>
+                                                    </form>
+                                                    <tree string="Price Lines Tree" editable="bottom" >
+                                                        <field name="cruise_cabin_id"/>
+                                                        <field name="qtty"/>
+                                                        <field name="unit_price"/>
+                                                        <field name="subtotal_price"/>
+                                                        <field name="unit_cost"/>
+                                                        <field name="subtotal_cost"/>
+                                                    </tree>
+                                                </field>
+                                            <group class="oe_subtotal_footer oe_right" 
+                                                colspan="2" 
+                                                name="cruise_price_total">
+                                                    <div class="oe_subtotal_footer_separator oe_inline">
+                                                        <label for="cruise_price_total" />
+                                                        <button name="button_dummy"
+                                                             string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                                     </div>
+                                                    <field name="cruise_price_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                                            </group>
+
+                                          </page>
+                                      </notebook>
+                                  </group>
+                              </form>
+                              <tree string="Cruises">
+                                  <field name="product_id"/>
+                                  <field name="cruise_price_total"/>
+                                  <field name="cruise_cost_total"/>
+                                  <field name="start_date"/>
+                                  <field name="end_date"/>
+                                  <field name="tour_status"/>
+                              </tree>
+                          </field>
+                        </group>  
+                        <group class="oe_subtotal_footer oe_right" colspan="2" name="acco_sale_total">
+                                <div class="oe_subtotal_footer_separator oe_inline">
+                                    <label for="cruise_amount_total" />
+                                    <button name="button_dummy"
+                                         string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                 </div>
+                                <field name="cruise_amount_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                        </group>
+                      </group>
+                  </page>
+                  <page string="Lodge"> 
+                    <group>
+                        <group>
+                          <field name="lodge_line_ids" nolabel="1">
+                              <form string="Lodge" version="7.0">
+                                  <div class="oe_title">
+                                      <label for="product_id" class="oe_edit_only" />
+                                      <h1><field name="product_id"/></h1>
+                                  </div>
+                                  <group>
+                                      <group>
+                                          <field name="start_date"/>
+                                          <field name="end_date"/>
+                                          <field name="limit_date"/>
+                                      </group>
+                                      <group>
+                                          <field name="tour_status"/>
+                                          <field name="agent_commission"/>
+                                          <field name="emergency_contact"/>
+                                      </group>
+                                  </group>
+                                  <notebook>
+                                      <page string="Observations">
+                                          <field name="observations"/>
+                                      </page>
+                                      <page string="Itinerary">
+                                          <field name="itinerary" widget="html" />
+                                      </page>
+                                      <page string="Prices">
+                                          <field name="lodge_tour_sale_orde_price_line_ids">
+                                              <form string="Price Line">
+                                                  <field name="tour_bed_type_id"/>
+                                                  <field name="qtty"/>
+                                                  <field name="unit_price"/>
+                                                  <field name="subtotal_price"/>
+                                                  <field name="unit_cost"/>
+                                                  <field name="subtotal_cost"/>
+                                              </form>
+                                              <tree string="Price Line" editable="bottom">
+                                                  <field name="tour_bed_type_id"/>
+                                                  <field name="qtty"/>
+                                                  <field name="unit_price"/>
+                                                  <field name="subtotal_price"/>
+                                                  <field name="unit_cost"/>
+                                                  <field name="subtotal_cost"/>
+                                              </tree>
+                                          </field>
+                                            <group class="oe_subtotal_footer oe_right" 
+                                                colspan="2" 
+                                                name="lodge_price_total">
+                                                    <div class="oe_subtotal_footer_separator oe_inline">
+                                                        <label for="lodge_price_total" />
+                                                        <button name="button_dummy"
+                                                             string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                                     </div>
+                                                    <field name="lodge_price_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                                            </group>
+                                      </page>
+                                  </notebook>
+                              </form>
+                              <tree string="Lodges">
+                                  <field name="product_id"/>
+                                  <field name="lodge_cost_total"/>
+                                  <field name="lodge_price_total"/>
+                                  <field name="tour_status"/>
+                              </tree>
+                          </field>
+                        </group>
+                        <group class="oe_subtotal_footer oe_right" colspan="2" name="lodge_sale_total">
+                                <div class="oe_subtotal_footer_separator oe_inline">
+                                    <label for="lodge_amount_total" />
+                                    <button name="button_dummy"
+                                         string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                 </div>
+                                <field name="lodge_amount_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                        </group>
+                    </group>
+                </page>
+                 <page string="Package">                
+                     <group>
+                         <group>
+                              <field name="package_line_ids" nolabel="1">
+                                  <form string="Package" version="7.0" >
+                                      <div class="oe_title">
+                                          <label for="product_id" class="oe_edit_only" />
+                                          <h1><field name="product_id"/></h1>
+                                          <field name="package_itinerary"/>
+                                      </div>
+                                      <group>
+                                          <group>
+                                              <field name="start_date"/>
+                                              <field name="end_date"/>
+                                              <field name="limit_date"/>
+                                          </group>
+                                          <group>
+                                              <field name="tour_status"/>
+                                              <field name="agent_commission"/>
+                                              <field name="emergency_contact"/>
+                                          </group>
+                                      </group>
+                                      <notebook>
+                                          <page string="Observations">
+                                              <field name="observations"/>
+                                          </page>
+                                          <page string="Itinerary">
+                                              <field name="itinerary" widget="html"/>
+                                          </page>
+                                          <page string="Prices">
+                                              <field name="package_tour_sale_orde_price_line_ids">
+                                                  <form string="Price Line">
+                                                      <field name="description"/>
+                                                      <field name="qtty"/>
+                                                      <field name="unit_price"/>
+                                                      <field name="subtotal_price"/>
+                                                      <field name="unit_cost"/>
+                                                      <field name="subtotal_cost"/>
+                                                  </form>
+                                                  <tree string="Price Line" editable="bottom">
+                                                      <field name="description"/>
+                                                      <field name="qtty"/>
+                                                      <field name="unit_price"/>
+                                                      <field name="subtotal_price"/>
+                                                      <field name="unit_cost"/>
+                                                      <field name="subtotal_cost"/>
+                                                  </tree>
+                                              </field>
+                                                <group class="oe_subtotal_footer oe_right" 
+                                                    colspan="2" 
+                                                    name="package_price_total">
+                                                        <div class="oe_subtotal_footer_separator oe_inline">
+                                                            <label for="package_price_total" />
+                                                            <button name="button_dummy"
+                                                                 string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                                         </div>
+                                                        <field name="package_price_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                                                </group>
+                                          </page>
+                                      </notebook>
+                                  </form>
+                                  <tree string="Packages">
+                                      <field name="product_id"/>
+                                      <field name="package_cost_total"/>
+                                      <field name="package_price_total"/>
+                                      <field name="start_date"/>
+                                      <field name="end_date"/>
+                                      <field name="tour_status"/>
+                                  </tree>
+                              </field>
+                          </group>
+                          <group class="oe_subtotal_footer oe_right" colspan="2" name="package_sale_total">
+                                  <div class="oe_subtotal_footer_separator oe_inline">
+                                      <label for="package_amount_total" />
+                                      <button name="button_dummy"
+                                           string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                   </div>
+                                  <field name="package_amount_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                          </group>
+                       </group>
+                 </page>
+                 <page string="Transfer"> 
+                     <group> 
+                         <group>
+                              <field name="transfer_line_ids" nolabel="1">
+                                  <form string="Transfer">
+                                      <field name="product_id"/>
+                                      <field name="start_date"/>
+                                      <field name="end_date"/>
+                                      <field name="unit_cost"/>
+                                      <field name="unit_price"/>
+                                      <field name="limit_date"/>
+                                      <field name="tour_status"/>
+                                      <field name="qtty"/>
+                                      <field name="agent_commission"/>
+                                      <field name="emergency_contact"/>
+                                      <field name="itinerary" widget="html"/>
+                                      <field name="observations"/>
+                                  </form>
+                                  <tree string="Transfers">
+                                      <field name="product_id"/>
+                                      <field name="unit_cost"/>
+                                      <field name="unit_price"/>
+                                      <field name="transfer_total_line_price"/>
+                                      <field name="tour_status"/>
+                                  </tree>
+                              </field>
+                         </group>
+                         <group class="oe_subtotal_footer oe_right" colspan="2" name="tranfer_sale_total">
+                                 <div class="oe_subtotal_footer_separator oe_inline">
+                                     <label for="transfer_amount_total" />
+                                     <button name="button_dummy"
+                                          string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                  </div>
+                                 <field name="transfer_amount_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                         </group>
+                     </group>
+                 </page>
+                 <page string="Assistance"> 
+                     <group> 
+                         <group>
+                              <field name="assistance_line_ids" nolabel="1">
+                                  <form string="Assistance">
+                                      <field name="product_id"/>
+                                      <field name="start_date"/>
+                                  <field name="end_date"/>
+                                  <field name="unit_cost"/>
+                                  <field name="unit_price"/>
+                                  <field name="limit_date"/>
+                                  <field name="tour_status"/>
+                                  <field name="qtty"/>
+                                  <field name="agent_commission"/>
+                                  <field name="emergency_contact"/>
+                                  <field name="itinerary" widget="html"/>
+                                  <field name="observations"/>
+                              </form>
+                              <tree string="Assistances">
+                                  <field name="product_id"/>
+                                  <field name="unit_cost"/>
+                                  <field name="unit_price"/>
+                                  <field name="tour_status"/>
+                              </tree>
+                          </field>
+                        </group>
+                        <group class="oe_subtotal_footer oe_right" colspan="2" name="assistance_sale_total">
+                                <div class="oe_subtotal_footer_separator oe_inline">
+                                    <label for="assistance_amount_total" />
+                                    <button name="button_dummy"
+                                         string="(update)" type="object" class="oe_edit_only oe_link"/>
+                                 </div>
+                                <field name="assistance_amount_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                        </group>
+                     </group>
+             </page>
+             <page string="Ticket"> 
+                 <group> 
+                     <group>
+                          <field name="fticket_line_ids" nolabel="1">
+                              <form string="Ticket" version="7.0"> 
+                                  <div class="oe_title">
+                                      <label for="product_id" class="oe_edit_only" />
+                                      <h1><field name="product_id"/></h1>
+                                  </div>
+                                  <group>
+                                      <group>
+                                          <field name="start_date"/>
+                                          <field name="end_date"/>
+                                          <field name="limit_date"/>
+                                          <field name="qtty"/>
+                                          <field name="unit_cost"/>
+                                          <field name="unit_price"/>
+                                      </group>
+                                      <group>
+                                          <field name="tour_status"/>
+                                          <field name="agent_commission"/>
+                                          <field name="emergency_contact"/>
+                                          <field name="itinerary" widget="html"/>
+                                      </group>
+                                  </group>
+                                  <notebook colspan="4">
+                                      <page string="Observations">
+                                          <field name="observations"/>
+                                      </page>
+                                      <page string="Ticket information">
+                                          <field name="tour_ticket_info_ids">
+                                              <form string="Ticket Info" version="7.0">
+                                                  <field name="ticket_date" />
+                                                  <field name="route" />
+                                                  <field name="flight"/>
+                                                  <field name="airline"/>
+                                                  <field name="departure" widget="float_time"/>
+                                                  <field name="arrival" widget="float_time"/>
+                                              </form>
+                                              <tree string="Ticket Info" editable="bottom">
+                                                  <field name="ticket_date" />
+                                                  <field name="route" />
+                                                  <field name="flight"/>
+                                                  <field name="airline"/>
+                                                  <field name="departure" widget="float_time"/>
+                                                  <field name="arrival" widget="float_time"/>
+                                              </tree>
+                                          </field>
+                                      </page>
+                                  </notebook>
+                              </form>
+                              <tree string="Tickets">
+                                  <field name="product_id"/>
+                                  <field name="unit_cost"/>
+                                  <field name="unit_price"/>
+                                  <field name="tour_status"/>
+                              </tree>
+                          </field>
+                    </group>
+                    <group class="oe_subtotal_footer oe_right" colspan="2" name="ticket_sale_total">
+                            <div class="oe_subtotal_footer_separator oe_inline">
+                                <label for="ticket_amount_total" />
+                                <button name="button_dummy"
+                                     string="(update)" type="object" class="oe_edit_only oe_link"/>
+                             </div>
+                            <field name="ticket_amount_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                    </group>
+                 </group>
+             </page>
+             <page string="Extra"> 
+                 <group> 
+                     <group>
+                          <field name="msc_line_ids" nolabel="1">
+                              <form string="Extra">
+                                  <field name="product_id"/>
+                                  <field name="start_date"/>
+                                  <field name="end_date"/>
+                                  <field name="unit_cost"/>
+                                  <field name="unit_price"/>
+                                  <field name="limit_date"/>
+                                  <field name="tour_status"/>
+                                  <field name="qtty"/>
+                                  <field name="agent_commission"/>
+                                  <field name="emergency_contact"/>
+                                  <field name="itinerary" widget="html"/>
+                                  <field name="observations"/>
+                              </form>
+                              <tree string="Extra">
+                                  <field name="product_id"/>
+                                  <field name="unit_cost"/>
+                                  <field name="unit_price"/>
+                                  <field name="tour_status"/>
+                              </tree>
+                          </field>
+                    </group>
+                    <group class="oe_subtotal_footer oe_right" colspan="2" name="msc_sale_total">
+                            <div class="oe_subtotal_footer_separator oe_inline">
+                                <label for="msc_amount_total" />
+                                <button name="button_dummy"
+                                     string="(update)" type="object" class="oe_edit_only oe_link"/>
+                             </div>
+                            <field name="msc_amount_total" nolabel="1" class="oe_subtotal_footer_separator" />
+                    </group>
+                </group>
+             </page>
+             <page string="Pax"> 
+                 <group>
+                     <field name="paxline_ids" nolabel="1">
+                         <form string="Pax">
+                             <field name="partner_id" />
+                         </form>
+                         <tree string="Pax" editable="bottom">
+                             <field name="partner_id" />
+                         </tree>
+                    </field>
+                 </group>    
+             </page>
+            </notebook>
+          </field>
+        </record>
+    </data>
+</openerp>
