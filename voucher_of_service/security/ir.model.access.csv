@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tour_location,access_tour_location,model_tour_location,tour_operation.ato_group_manager,1,1,1,1
+access_tour_visit_point,access_tour_visit_point,model_tour_visit_point,tour_operation.ato_group_manager,1,1,1,1
+access_tour_voucherofservice,access_tour_voucherofservice,model_tour_voucherofservice,tour_operation.ato_group_manager,1,1,1,1
+access_tour_vos_visitpoint,access_tour_voucherofservice_visitpoint,model_tour_vos_visitpoint,tour_operation.ato_group_manager,1,1,1,1
+access_tour_vos_itinerary_overnight,access_tour_vos_itinerary_overnight,model_tour_vos_itinerary_overnight,tour_operation.ato_group_manager,1,1,1,1

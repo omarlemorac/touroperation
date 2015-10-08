@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+      <report id="voucherofservice_report"
+          model="tour.voucherofservice"
+          name="tour.voucherofservice_report"
+          rml="voucher_of_service/report/voucher_of_service.mako"
+          string="Voucher Of Service"
+          report_type="webkit" />
+    </data>
+</openerp>

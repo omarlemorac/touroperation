@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+  <data>
+    <!--========================================================
+                  Voucher of Service
+    ========================================================-->
+    <record model="ir.ui.view" id="view_vos_tree">
+      <field name="name">tour.voucherofservice_tree</field>
+      <field name="model">tour.voucherofservice</field>
+      <field name="arch" type="xml">
+        <tree string="Voucher Of Service">
+          <field name="name" />
+          <field name="folio_id" select="1" />
+        </tree>
+      </field>
+    </record>
+    <record model="ir.ui.view" id="view_vos_form">
+      <field name="name">tour.vos.form</field>
+      <field name="model">tour.voucherofservice</field>
+      <field name="arch" type="xml">
+        <form string="Voucher Of Service" version="7.0">
+          <sheet>
+            <div class="oe_title">
+              <div class="oe_edit_only">
+                <label for="name" string="Reference"/>
+              </div>
+                <h1><field name="name" /></h1>
+            </div>
+            <group>
+              <group>
+                <field name="folio_id" />
+              </group>
+            </group>
+            <notebook>
+              <page string="Passenger Names" >
+                <field name="passenger_ids" nolabel="1" >
+                  <tree>
+                    <field name="firstname" />
+                    <field name="lastname" />
+                    <field name="ced_ruc"  string="Pasaporte"/>
+                    <field name="gender" /> 
+                  </tree>
+                </field>
+              </page>
+              <page string="Itinerary" >
+                <field name="overnight_ids" >
+                  <tree>
+                    <field name="date" />
+                    <field name="visitpoint_id" />
+                  </tree>
+                  <form version="7.0">
+                    <group>
+                      <field name="date" />
+                      <field name="visitpoint_id" />
+                    </group>
+                    <notebook>
+                      <page string="Visit Points">
+                        <field name="visitpoint_ids" nolabel="1">
+                          <tree>
+                            <field name="hour" />
+                            <field name="location_id" />
+                            <field name="visitpoint_id" />
+                            <field name="breakfast" />
+                            <field name="lunch" />
+                            <field name="dinner" />
+                            <field name="note" />
+                          </tree>
+                        </field>
+                      </page>
+                    </notebook>
+                  </form>
+                </field>
+              </page>
+              <page string="Included" >
+                <field name="included" nolabel="1" />
+              </page>
+              <page string="Excluded" >
+                <field name="excluded" nolabel="1" />
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+    <record model="ir.actions.act_window" id="open_vos_form_tree_all">
+      <field name="name">Voucher Of Service</field>
+      <field name="res_model">tour.voucherofservice</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+		<menuitem name="Voucher Of Service"
+		  id="menu_tour_vos_form_tree_all"
+		  action="open_vos_form_tree_all"
+		  sequence="10"
+		  parent ="tour_operation.menu_folio"/>			
+  </data>
+</openerp>
+

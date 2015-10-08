@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+      <!--========================================================
+                    Tour Folio
+      ========================================================-->
+      <record model="ir.ui.view" id="view_tour_folio_tree">
+        <field name="name">tour.folio.tree</field>
+        <field name="model">tour.folio</field>
+        <field name="arch" type="xml">
+          <tree string="Tour">
+            <field name="arrival_date" />
+            <field name="departure_date" />
+            <field name="name" select="1"/>
+            <field name="partner_id"  select="1"/>
+            <field name="date_order" select="1"/>
+            <field name="amount_total" sum="Total amount"/>
+            <field name="state" />
+          </tree>
+        </field>
+      </record>
+        
+      <record model="ir.ui.view" id="view_tour_folio_form">
+        <field name="name">tour.folio.form</field>
+        <field name="model">tour.folio</field>
+        <field name="arch" type="xml">
+          <form string="Folio" version="7.0">
+            <header>
+              <field name="state" widget="statusbar" statusbar_visible="draft,sent,progress,done" statusbar_colors='{"invoice_except":"red","waiting_date":"blue"}'/>
+            </header>
+            <sheet>
+              <div class="oe_title">
+                <div class="oe_edit_only">
+                  <label for="name" string="Reference"/>
+                </div>
+                  <h1><field name="name" placeholder="ReferenceNameX" /></h1>
+              </div>
+              <group>
+                <group>
+                  <field name="partner_id" on_change="onchange_partner_id(partner_id, context)" domain="[('customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'/>
+                  <field domain="[('type','=','sale')]" name="pricelist_id" groups="product.group_sale_pricelist" on_change="onchange_pricelist_id(pricelist_id,tour_folio_line_ids)"/>
+                </group>
+                <group>
+                  <field name="partner_invoice_id" groups="sale.group_delivery_invoice_address" context="{'default_type':'invoice'}"/>
+                  <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address" context="{'default_type':'delivery'}"/>
+                </group>
+                <group>
+                  <field name="user_id"/>
+                </group>
+                <group>
+                  <field name="arrival_date"/>
+                  <field name="departure_date"/>
+                </group>
+                <group name="sale_pay">
+                  <field name="payment_term" widget="selection"/>
+                  <field name="fiscal_position" widget="selection"/>
+                  <field name="company_id" 
+                    widget="selection" 
+                    groups="base.group_multi_company"/>
+                </group>
+              </group>
+              <notebook>
+                <!--
+                <page string="Order Lines">
+                  <field name="order_line" />
+                </page>
+                -->
+                <page string="Folio Lines">
+                  <field name="tour_folio_line_ids" >
+                      <tree>
+                        <field name="name" />
+                        <field name="price_subtotal" />
+                        <field name="option_date" />
+                        <field name="deposit_date" />
+                        <field name="balance_date" />
+                        <field name="state" />
+                      </tree>
+                  </field>
+                  <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                      <field name="amount_untaxed" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                      <field name="amount_tax" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                      <div class="oe_subtotal_footer_separator oe_inline">
+                          <label for="amount_total" />
+                          <button name="button_dummy"
+                              states="draft,sent" string="(update)" type="object" class="oe_edit_only oe_link"/>
+                      </div>
+                      <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                  </group>
+                  <div class="oe_clear"/>
+                  <field name="note" class="oe_inline" placeholder="Terms and conditions..."/>
+                </page>
+                <page string="Deadlines">
+                  <group>
+                    <field name="confirm_date" />
+                    <field name="payment_date" />
+                    <field name="paid_date" />
+                  </group>
+                </page>
+                <page string = "Curstomer Payments">
+                  <field name="folio_uv_customer_payment_ids" widget="one2many_list" nolabel="1" >
+                    <tree editable="bottom">
+                      <field name="payment_date" />
+                      <field name="amount" />
+                      <field name="journal_id" />
+                    </tree>
+                  </field>
+                  <group class="oe_subtotal_footer oe_right">
+                    <div>
+                      <label for="unverified_payment_amount_total">UV Payment Total</label>
+                      <button name="button_reset_totals" states="draft" string="(update)" class="oe_link oe_edit_only" type="object" help="Recompute total"/>
+                    </div>
+                    <field name="unverified_payment_amount_total" nolabel="1"/>
+                    <label for="unverified_outstanding_balance">UV Balance</label>
+                    <field name="unverified_outstanding_balance" nolabel="1"/>
+                    <label for="verified_payment_amount_total">Verified Payment Total</label>
+                    <field name="verified_payment_amount_total" nolabel="1"/>
+                    <label for="verified_outstanding_balance" style="margin-top: 10px" string = "Verified Outstanding Balance" />
+                    <field name="verified_outstanding_balance" nolabel="1" style="margin-top: 10px"/>
+                  </group>
+                  <div class="oe_clear"/>
+                  <field name="payment_notes" class="oe_inline" placeholder="Payment notes..."/>
+                </page>
+              </notebook>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+          </form>
+        </field>
+      </record>
+      <!--========================================================
+                    Advance payment
+      ========================================================-->
+      <record model="ir.ui.view" id="tourfolio_form_advance_payment_view">
+        <field name="name">tour.folio.form.advance_payment</field>
+        <field name="model">account.voucher</field>
+        <field name="inherit_id" ref="l10n_ec_advances.view_account_advance_custm_form" />
+        <field name="arch" type="xml" >
+          <xpath expr="//field[@name='name']" position="after" >
+             <field name="folio_id" /> 
+          </xpath>
+        </field>
+      </record>
+      <!-- Menu Principal -->
+      <menuitem name="Tour Operation" string="Tour Operation" id="main_menu_touroperator" />
+      <record model="ir.actions.act_window" id="open_tour_folio_form_tree_all">
+        <field name="name">Tour Folio</field>
+        <field name="res_model">tour.folio</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+      </record>
+      <menuitem  id="menu_folio" name="Folio" parent="tour_operation.main_menu_touroperator" sequence="4"/>  			 
+		<menuitem name="Folio"
+				  id="menu_tour_folio_form_tree_all"
+				  action="open_tour_folio_form_tree_all"
+				  sequence="5"
+				  parent ="menu_folio"/>			
+    </data>
+</openerp>

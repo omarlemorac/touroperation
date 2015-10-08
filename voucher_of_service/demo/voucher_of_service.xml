@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data noupdate="0">
+    <record id="vos_partner_01" model="res.partner">
+      <field name="firstname">Jefry</field>
+      <field name="lastname">Call</field>
+      <field name="is_company" eval="False" />
+      <field name="is_pax" eval="True" />
+      <field name="type_ced_ruc">pasaporte</field>
+      <field name="tipo_persona">6</field>
+      <field name="ced_ruc">421311284</field>
+    </record>
+    <record id="vos_partner_02" model="res.partner">
+      <field name="firstname">Amy</field>
+      <field name="lastname">Call</field>
+      <field name="is_company" eval="False" />
+      <field name="is_pax" eval="True" />
+      <field name="type_ced_ruc">pasaporte</field>
+      <field name="tipo_persona">6</field>
+      <field name="ced_ruc">481513762</field>
+    </record>
+    <record id="vos_partner_03" model="res.partner">
+      <field name="firstname">Jacques</field>
+      <field name="lastname">Darwin</field>
+      <field name="is_company" eval="False" />
+      <field name="is_pax" eval="True" />
+      <field name="type_ced_ruc">pasaporte</field>
+      <field name="tipo_persona">6</field>
+      <field name="ced_ruc">5244797228</field>
+    </record>
+    <record id="vos_partner_04" model="res.partner">
+      <field name="firstname">Chelsea</field>
+      <field name="lastname">Call</field>
+      <field name="is_company" eval="False" />
+      <field name="is_pax" eval="True" />
+      <field name="type_ced_ruc">pasaporte</field>
+      <field name="tipo_persona">6</field>
+      <field name="ced_ruc">482628532</field>
+    </record>
+    <record id="vos_partner_05" model="res.partner">
+      <field name="firstname">Lacey</field>
+      <field name="lastname">Call</field>
+      <field name="is_company" eval="False" />
+      <field name="is_pax" eval="True" />
+      <field name="type_ced_ruc">pasaporte</field>
+      <field name="tipo_persona">6</field>
+      <field name="ced_ruc">485089997</field>
+    </record>
+    <record id="vos_partner_06" model="res.partner">
+      <field name="lastname">Happy Gringo</field>
+      <field name="name">Happy Gringo</field>
+      <field name="is_company" eval="True" />
+      <field name="is_pax" eval="False" />
+    </record>
+
+    <!-- ======================================================
+         Folio
+    ===================================================     -->
+    <record id="vos_folio_01" model="tour.folio" >
+      <field name="name">/MalfoyX3</field>
+      <field name="arrival_date">2015-11-02</field>
+      <field name="departure_date">2015-11-15</field>
+      <field name="confirm_date">2015-10-10</field>
+      <field name="partner_id" ref="vos_partner_06" />
+      <field name="partner_invoice_id" ref="vos_partner_06"/>
+      <field name="partner_shipping_id" ref="vos_partner_06"/>
+      <field name="shop_id" ref="sale.sale_shop_1"/>
+      <field name="user_id" ref="base.user_demo"/>
+      <field name="pricelist_id" ref="product.list0"/>
+    </record>
+    <record id="vos_folio_02" model="tour.folio" >
+      <field name="name">/HagridX4</field>
+      <field name="arrival_date">2015-11-02</field>
+      <field name="departure_date">2015-11-15</field>
+      <field name="confirm_date">2015-10-10</field>
+      <field name="partner_id" ref="vos_partner_06" />
+      <field name="partner_invoice_id" ref="vos_partner_06"/>
+      <field name="partner_shipping_id" ref="vos_partner_06"/>
+      <field name="shop_id" ref="sale.sale_shop_1"/>
+      <field name="user_id" ref="base.user_demo"/>
+      <field name="pricelist_id" ref="product.list0"/>
+    </record>
+    <record id="vos_folio_01" model="tour.folio" >
+      <field name="name">/SnapeX2</field>
+      <field name="arrival_date">2015-11-02</field>
+      <field name="departure_date">2015-11-15</field>
+      <field name="confirm_date">2015-10-10</field>
+      <field name="partner_id" ref="vos_partner_06" />
+      <field name="partner_invoice_id" ref="vos_partner_06"/>
+      <field name="partner_shipping_id" ref="vos_partner_06"/>
+      <field name="shop_id" ref="sale.sale_shop_1"/>
+      <field name="user_id" ref="base.user_demo"/>
+      <field name="pricelist_id" ref="product.list0"/>
+    </record>
+    <!-- ======================================================
+         Location
+    ===================================================     -->
+    <record id="vos_location_01" model="tour.location">
+      <field name="name">Quito</field>
+      <field name="description">Quito city</field>
+    </record>
+
+    <record id="vos_location_02" model="tour.location">
+      <field name="name">San Cristobal Island</field>
+      <field name="description">San Cristobal Islannd</field>
+    </record>
+
+    <!-- ======================================================
+         Visit point
+    ===================================================     -->
+    <record id="vos_visit_point_01" model="tour.visit_point">
+      <field name="location_id" ref="vos_location_01" />
+      <field name="name">Transfer In</field>
+      <field name="description">Transfer In</field>
+    </record>
+    <record id="vos_visit_point_02" model="tour.visit_point">
+      <field name="location_id" ref="vos_location_01" />
+      <field name="name">Transfer Out</field>
+      <field name="description">Transfer Out</field>
+    </record>
+    <record id="vos_visit_point_03" model="tour.visit_point">
+      <field name="location_id" ref="vos_location_02" />
+      <field name="name">Transfer In - San Cristobal</field>
+      <field name="description">Transfer In - San Cristobal</field>
+    </record>
+    <record id="vos_visit_point_04" model="tour.visit_point">
+      <field name="location_id" ref="vos_location_02" />
+      <field name="name">Diving - Wreck Caragua</field>
+      <field name="description">Diving - Wreck Caragua</field>
+    </record>
+    <record id="vos_visit_point_05" model="tour.visit_point">
+      <field name="location_id" ref="vos_location_02" />
+      <field name="name">Transfer Out - San Cristobal</field>
+      <field name="description">Transfer Out - San Cristobal</field>
+    </record>
+    <record id="vos_visit_point_06" model="tour.visit_point">
+      <field name="location_id" ref="vos_location_02" />
+      <field name="name">San Cristobal Airport</field>
+      <field name="description">San Cristobal Airport</field>
+    </record>
+    <record id="vos_visit_point_07" model="tour.visit_point">
+      <field name="location_id" ref="vos_location_02" />
+      <field name="name">Lobos Island</field>
+      <field name="description">Lobos Island</field>
+    </record>
+    <record id="vos_visit_point_08" model="tour.visit_point">
+      <field name="location_id" ref="vos_location_01" />
+      <field name="name">Swisshotel</field>
+      <field name="description">Swisshotel</field>
+    </record>
+    <record id="vos_visit_point_09" model="tour.visit_point">
+      <field name="location_id" ref="vos_location_02" />
+      <field name="name">M/Y Galaxy</field>
+      <field name="description">M/Y Galaxy</field>
+    </record>
+    <record id="vos_visit_point_10" model="tour.visit_point">
+      <field name="location_id" ref="vos_location_01" />
+      <field name="name">Hotel Arena Blanca</field>
+      <field name="description">Hotel Arena Blanca</field>
+    </record>
+    <!-- ======================================================
+         Airlines
+    ===================================================     -->
+    <record id="airline_01" model="touroperation.airline">
+      <field name="name">EQ</field>
+      <field name="description">TAME</field>
+    </record>
+    <record id="airline_02" model="touroperation.airline">
+      <field name="name">LH</field>
+      <field name="description">Lufthansa</field>
+    </record>
+
+    <!-- ======================================================
+         Airports
+    ===================================================     -->
+    <record id="airport_uio" model="touroperation.airport">
+      <field name="country_id" ref="base.ec" />
+      <field name="name">UIO</field>
+      <field name="description">Aeropuerto Mariscal Sucre</field>
+    </record>
+    <record id="airport_gps" model="touroperation.airport">
+      <field name="country_id" ref="base.ec" />
+      <field name="name">GPS</field>
+      <field name="description">Aeropuerto Seymour</field>
+    </record>
+
+    <!-- ======================================================
+         Voucher of service
+    ===================================================     -->
+    <record id="vos_01" model="tour.voucherofservice" >
+      <!-- Folio_id crear primero el folio -->
+      <field name="name">VOS01</field>
+      <field name="folio_id" ref="vos_folio_01" />
+      <field name="passenger_ids" eval="[(4, ref('vos_partner_01')), (4, ref('vos_partner_02')), (4, ref('vos_partner_04')),]" />
+      <field name="included">1 night accomodation in San Cristobal Transfers</field>
+      <field name="excluded">Any service or meal nor mentioned in the program</field>
+      <field name="important_notes">Please note that you mus bring your original passaport with you. A photocopy is not accepted</field>
+      <field name="ib_ap_dep_id" ref="airport_uio" />
+      <field name="ib_ap_arr_id" ref="airport_gps" />
+      <field name="ib_time_dep">2015-10-10</field>
+      <field name="ib_time_arr">2015-10-10</field>
+      <field name="ib_airline_id" ref="airline_01" />
+      <field name="ib_flight_no">TA2387</field>
+      <field name="ob_ap_dep_id" ref="airport_gps" />
+      <field name="ob_ap_arr_id" ref="airport_uio" />
+      <field name="ob_time_dep">2015-10-10</field>
+      <field name="ob_time_arr">2015-10-10</field>
+      <field name="ob_airline_id" ref="airline_01" />
+      <field name="ob_flight_no">TA4432</field>
+      <field name="emergency_phones">Galaxy Yatch 0995379215</field>
+      <field name="hotel_contact">Arena Blanca Hotel: Avenida Tulcan y Avenida Quito, Puerto Baquerizo Moreno 180250</field>
+    </record>
+    <record id="vos_02" model="tour.voucherofservice" >
+      <!-- Folio_id crear primero el folio -->
+      <field name="name">VOS02</field>
+      <field name="folio_id" ref="vos_folio_02" />
+      <field name="passenger_ids" eval="[(4, ref('vos_partner_01')), (4, ref('vos_partner_02')), (4, ref('vos_partner_04')),]" />
+      <field name="included">1 night accomodation in San Cristobal Transfers</field>
+      <field name="excluded">Any service or meal nor mentioned in the program</field>
+      <field name="important_notes">Please note that you mus bring your original passaport with you. A photocopy is not accepted</field>
+      <field name="ib_ap_dep_id" ref="airport_uio" />
+      <field name="ib_ap_arr_id" ref="airport_gps" />
+      <field name="ib_time_dep">2015-10-10</field>
+      <field name="ib_time_arr">2015-10-10</field>
+      <field name="ib_airline_id" ref="airline_01" />
+      <field name="ib_flight_no">TA2387</field>
+      <field name="ob_ap_dep_id" ref="airport_gps" />
+      <field name="ob_ap_arr_id" ref="airport_uio" />
+      <field name="ob_time_dep">2015-10-10</field>
+      <field name="ob_time_arr">2015-10-10</field>
+      <field name="ob_airline_id" ref="airline_01" />
+      <field name="ob_flight_no">TA3465</field>
+      <field name="emergency_phones">Galaxy Yatch 0995379215</field>
+      <field name="hotel_contact">Arena Blanca Hotel: Avenida Tulcan y Avenida Quito, Puerto Baquerizo Moreno 180250</field>
+    </record>
+    <!-- ======================================================
+         Overnight
+    ===================================================     -->
+    <record id="tour_vos_overnight_01" model="tour.vos_itinerary_overnight" >
+      <field name="sequence">10</field>
+      <field name="voucherofservice_id" ref="vos_02" />
+      <field name="visitpoint_id" ref="vos_visit_point_08" />
+      <field name="date">2015-07-26</field>
+    </record>
+    <record id="tour_vos_overnight_02" model="tour.vos_itinerary_overnight" >
+      <field name="sequence">20</field>
+      <field name="voucherofservice_id" ref="vos_02" />
+      <field name="visitpoint_id" ref="vos_visit_point_10" />
+      <field name="date">2015-07-27</field>
+    </record>
+    <record id="tour_vos_overnight_03" model="tour.vos_itinerary_overnight" >
+      <field name="sequence">30</field>
+      <field name="voucherofservice_id" ref="vos_02" />
+      <field name="visitpoint_id" ref="vos_visit_point_09" />
+      <field name="date">2015-07-28</field>
+    </record>
+    <record id="tour_vos_overnight_04" model="tour.vos_itinerary_overnight" >
+      <field name="sequence">40</field>
+      <field name="voucherofservice_id" ref="vos_02" />
+      <field name="visitpoint_id" ref="vos_visit_point_09" />
+      <field name="date">2015-07-29</field>
+    </record>
+    <!-- ======================================================
+         Visit line on voucher of service
+    ===================================================     -->
+    <record id="vos_it_visit_point_01" model="tour.vos_visitpoint">
+      <field name="hour">12:30</field>
+      <field name="overnight_id" ref="tour_vos_overnight_01" />
+      <field name="breakfast" eval="True" />
+      <field name="lunch" eval="True" />
+      <field name="dinner" eval="True" />
+      <field name="visit_point_id" ref="vos_visit_point_01" />
+      <field name="note">Arrival 13:02 LAN 7089</field>
+    </record>
+    <record id="vos_it_visit_point_02" model="tour.vos_visitpoint">
+      <field name="hour">12:30</field>
+      <field name="overnight_id" ref="tour_vos_overnight_02" />
+      <field name="breakfast" eval="True" />
+      <field name="lunch" eval="True" />
+      <field name="dinner" eval="True" />
+      <field name="visit_point_id" ref="vos_visit_point_02" />
+      <field name="note">Arrival 13:02 LAN 7089</field>
+    </record>
+    <record id="vos_it_visit_point_03" model="tour.vos_visitpoint">
+      <field name="hour">12:30</field>
+      <field name="overnight_id" ref="tour_vos_overnight_02" />
+      <field name="breakfast" eval="True" />
+      <field name="lunch" eval="True" />
+      <field name="dinner" eval="True" />
+      <field name="visit_point_id" ref="vos_visit_point_03" />
+      <field name="note">Arrival 13:02 LAN 7089</field>
+    </record>
+  </data>
+</openerp>
