@@ -18,18 +18,17 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from osv import fields, osv
+from openerp import api, exceptions, fields, models
 import time
-import netsvc
+from openerp import netsvc
 from openerp.tools.translate import _
+from datetime import datetime
 #import ir
-from mx import DateTime
-import datetime
-from tools import config
+#from tools import config
 #import pdb
 
 
-class tour_folio(osv.osv):
+class tour_folio(models.Model):
 
     def _incoterm_get(self, cr, uid, context={}):
         return  self.pool.get('sale.order')._incoterm_get(cr, uid, context={})
@@ -54,134 +53,102 @@ class tour_folio(osv.osv):
 
     _name = 'tour.folio'
 
-    _description = 'tour folio new'
+    _description = 'Tour Folio Management'
 
     _inherits = {'sale.order':'order_id'}
     _inherit = ['mail.thread', 'ir.needaction_mixin']
 
     _rec_name = 'order_id'
 
-    def sch_confim_date_fcn(self, cr, uid, ids, field_name, arg, context=None):
-        if context is None:
-            context = {}
-        res = {}
-        tour_folio_obj =  self.browse(cr, uid, ids)
-        for tour_folio in tour_folio_obj:
-            if not tour_folio.confirm_date:
-               res[tour_folio.id] = False
-            else:
-                days =  datetime.timedelta(days = 1)
-                tour_folio_date = datetime.datetime.strptime(
-                        tour_folio.confirm_date, '%Y-%m-%d') - days
-                res[tour_folio.id] = tour_folio_date.strftime('%Y-%m-%d')
-        return res
+    @api.one
+    @api.depends('sch_confirm_date')
+    def _sch_confirm_date(self):
+        if not self.confirm_date:
+            self.sch_confirm_date = False
+        else:
+            days =  datetime.timedelta(days = 1)
+            tour_folio_date = datetime.datetime.strptime(
+                    self.sch_confirm_date, '%Y-%m-%d') - days
+            self.sch_confirm_date = tour_folio_date.strftime('%Y-%m-%d')
 
-    def sch_payment_date_fcn(self, cr, uid, ids, field_name, arg, context=None):
-        if context is None:
-            context = {}
-        res = {}
-        tour_folio_obj =  self.browse(cr, uid, ids)
-        for tour_folio in tour_folio_obj:
-            if not tour_folio.payment_date:
-               res[tour_folio.id] = False
-            else:
-                days =  datetime.timedelta(days = 1)
-                tour_folio_date = datetime.datetime.strptime(
-                        tour_folio.payment_date, '%Y-%m-%d') - days
-                res[tour_folio.id] = tour_folio_date.strftime('%Y-%m-%d')
-        return res
+    @api.one
+    @api.depends('sch_payment_date')
+    def sch_payment_date_fcn(self):
+        if not self.payment_date:
+           self.sch_payment_date = False
+        else:
+            days =  datetime.timedelta(days = 1)
+            tour_folio_date = datetime.datetime.strptime(
+                    self.payment_date, '%Y-%m-%d') - days
+            self.sch_payment_date = tour_folio_date.strftime('%Y-%m-%d')
 
+    @api.one
+    @api.depends('sch_paid_date')
     def sch_paid_date_fcn(self, cr, uid, ids, field_name, arg, context=None):
-        if context is None:
-            context = {}
-        res = {}
-        tour_folio_obj =  self.browse(cr, uid, ids)
-        for tour_folio in tour_folio_obj:
-            if not tour_folio.paid_date:
-               res[tour_folio.id] = False
-            else:
-                days =  datetime.timedelta(days = 1)
-                tour_folio_date = datetime.datetime.strptime(
-                        tour_folio.paid_date, '%Y-%m-%d') - days
-                res[tour_folio.id] = tour_folio_date.strftime('%Y-%m-%d')
-        return res
+        if not self.paid_date:
+           self.sch_paid_date = False
+        else:
+            days =  datetime.timedelta(days = 1)
+            tour_folio_date = datetime.datetime.strptime(
+                    self.paid_date, '%Y-%m-%d') - days
+            self.sch_paid_date = tour_folio_date.strftime('%Y-%m-%d')
 
-    def _get_unverified_payment(self, cr, uid, ids, field_name, arg, context=None):
-        if context is None:
-            context = {}
-        res = {}
-        if not ids:
-            return res
-        tour_folio_obj =  self.browse(cr, uid, ids)
-        for tour_folio in tour_folio_obj:
-            amount = 0.0
-            res[tour_folio.id] = {}
-            for payment in tour_folio.folio_uv_customer_payment_ids:
-                amount += payment.amount
-            res[tour_folio.id]['unverified_payment_amount_total'] = amount
-            res[tour_folio.id]['unverified_outstanding_balance'] = \
-              tour_folio.amount_untaxed - amount
-            amount = 0.0
-            for payment in tour_folio.folio_v_customer_payment_ids:
-                amount += payment.amount
-            res[tour_folio.id]['verified_payment_amount_total'] = amount
-            res[tour_folio.id]['verified_outstanding_balance'] = \
-              tour_folio.amount_untaxed - amount
-        return res
+    @api.one
+    @api.depends('unverified_payment_amount_total','unverified_outstanding_balance',
+                 'folio_uv_customer_payment_ids','amount_untaxed')
+    def _get_unverified_payment(self):
+        if self.folio_uv_customer_payment_ids:
+            amount = reduce(lambda x,y: x+y, self.folio_uv_customer_payment_ids) or 0.0
+            self.unverified_payment_amount_total = amount
+            self.unverified_outstanding_balance = self.amount_untaxed - amount
 
-    _columns = {
-          'order_id':fields.many2one('sale.order', 'order_id', required=True, ondelete='cascade'),
-          'arrival_date': fields.datetime('Arrival', required=True, readonly=True, states={'draft':[('readonly', False)]}),
-          'departure_date': fields.datetime('Departure', required=True, readonly=True, states={'draft':[('readonly', False)]}),
-          'tour_folio_line_ids': fields.one2many('tour_folio.line', 'folio_id'),
-          'folio_uv_customer_payment_ids':fields.one2many('tour_folio.customerpayment'
-              , 'folio_id'
-              , help='Register custormer payments for this folio'),
-          'tour_policy':fields.selection([('prepaid', 'On Booking'), ('manual',
-              'On Check In'), ('picking', 'On Departure')], 'Tour Policy', required=True),
-          'duration':fields.float('Duration'),
-          'confirm_date':fields.date('Option Date', required=True
-          , help='Deadline for option'),
-          'payment_date':fields.date('Deposit Date', required=False
-          , help='Deadline for deposit'),
-          'paid_date':fields.date('Balance Date', required=False
-          , help='Deadline of fully paid service '),
-          'payment_notes' : fields.text('Payment Notes'),
-          'folio_v_customer_payment_ids':fields.one2many('account.voucher', 'folio_id'
-              , 'Advance Payments', help='Advance payments for this folio'
-              , readonly = True),
-          'sch_confirm_date':fields.function(sch_confim_date_fcn
-              , string='Scheduled Option Date'
-              , type='date'),
-          'sch_payment_date':fields.function(sch_payment_date_fcn
-              , string='Scheduled Deposit Date'
-              , type='date'),
-          'sch_paid_date':fields.function(sch_paid_date_fcn
-              , string='Scheduled Balance Date'
-              , type='date'),
-          'unverified_payment_amount_total':fields.function(_get_unverified_payment
-              , string='UV Payment', multi=True
-              , type='float'),
-          'unverified_outstanding_balance':fields.function(_get_unverified_payment
-              , string='UV Balance', multi=True
-              , type='float'),
-          'verified_payment_amount_total':fields.function(_get_unverified_payment
-              , string='Verified Payment', multi=True
-              , type='float'),
-          'verified_outstanding_balance':fields.function(_get_unverified_payment
-              , string='Verified Balance', multi=True
-              , type='float'),
+        if self.folio_v_customer_payment_ids:
+            amount = reduce(lambda x, y: x+y, self.folio_v_customer_payment_ids) or 0.0
+            self.verified_payment_amount_total = amount
+            self.verified_outstanding_balance = self.amount_untaxed - amount
 
 
-    }
+    order_id = fields.Many2one('sale.order', 'order_id', required=True, ondelete='cascade')
+    arrival_date = fields.Datetime('Arrival', required=True, readonly=True, states={'draft':[('readonly', False)]})
+    departure_date = fields.Datetime('Departure', required=True, readonly=True, states={'draft':[('readonly', False)]})
+    tour_folio_line_ids = fields.One2many('tour_folio.line', 'folio_id')
+    folio_uv_customer_payment_ids = fields.One2many('tour_folio.customerpayment'
+          , 'folio_id'
+          , help='Register custormer payments for this folio')
+    tour_policy = fields.Selection([('prepaid', 'On Booking'), ('manual',
+          'On Check In'), ('picking', 'On Departure')], 'Tour Policy'
+          , default='manual', required=True)
+    duration = fields.Float('Duration')
+    confirm_date = fields.Date('Option Date', required=True
+      , help='Deadline for option')
+    payment_date = fields.Date('Deposit Date', required=False
+      , help='Deadline for deposit')
+    paid_date = fields.Date('Balance Date', required=False
+      , help='Deadline of fully paid service ')
+    payment_notes = fields.Text('Payment Notes')
+    folio_v_customer_payment_ids = fields.One2many('account.voucher', 'folio_id'
+          , 'Advance Payments', help='Advance payments for this folio', readonly = True)
 
-    _defaults = {
-                 'tour_policy':'manual'
-                 }
+    sch_confirm_date = fields.Date(compute="_sch_confirm_date"
+          , string='Scheduled Option Date')
+    sch_payment_date = fields.Date(compute="sch_payment_date_fcn"
+          , string='Scheduled Deposit Date')
+    sch_paid_date = fields.Date(compute="sch_paid_date_fcn"
+          , string='Scheduled Balance Date')
+    unverified_payment_amount_total = fields.Float(compute="_get_unverified_payment"
+          , string='UV Payment', multi=True)
+    unverified_outstanding_balance = fields.Float(compute="_get_unverified_payment"
+          , string='UV Balance', multi=True)
+    verified_payment_amount_total = fields.Float(compute="_get_unverified_payment"
+          , string='Verified Payment', multi=True)
+    verified_outstanding_balance = fields.Float(compute="_get_unverified_payment"
+          , string='Verified Balance', multi=True)
 
-    _sql_constraints = [
-                        ('check_in_out', 'CHECK (arrival_date<=departure_date)', 'Check in Date Should be less than the Check Out Date!'),
-                       ]
+    @api.one
+    @api.constrains('arrival_date','departure_date')
+    def check_in_out_date(self):
+        if self.arrival_date <= self.departure_date:
+            raise exceptions.ValidationError(_("Check in Date Should be less than the Check Out Date!"))
 
     def name_get(self, cr, uid, ids, context=None):
         if context is None:
@@ -191,24 +158,14 @@ class tour_folio(osv.osv):
             res.append((record.id, record.name))
         return res
 
-
-    def onchange_dates(self, cr, uid, ids, arrival_date=False, departure_date=False, duration=False):
-        value = {}
-        if not duration:
-            duration = 0
-            if arrival_date and departure_date:
-                chkin_dt = datetime.datetime.strptime(arrival_date, '%Y-%m-%d %H:%M:%S')
-                chkout_dt = datetime.datetime.strptime(departure_date, '%Y-%m-%d %H:%M:%S')
-                dur = chkout_dt - chkin_dt
-                duration = dur.days
-            value.update({'value':{'duration':duration}})
-        else:
-            if arrival_date:
-                chkin_dt = datetime.datetime.strptime(arrival_date, '%Y-%m-%d %H:%M:%S')
-                chkout_dt = chkin_dt + datetime.timedelta(days=duration)
-                departure_date = datetime.datetime.strftime(chkout_dt, '%Y-%m-%d %H:%M:%S')
-                value.update({'value':{'departure_date':departure_date}})
-        return value
+    @api.onchange('duration','arrival_date', 'departure_date')
+    def onchange_dates(self):
+        if self.arrival_date and self.departure_date:
+            chkin_dt = datetime.strptime(self.arrival_date, '%Y-%m-%d %H:%M:%S')
+            chkout_dt = datetime.strptime(self.departure_date, '%Y-%m-%d %H:%M:%S')
+            duration_delta = chkout_dt - chkin_dt
+            print duration_delta.days
+            self.duration = duration_delta.days
 
     def create(self, cr, uid, vals, context=None, check=True):
         vals['order_policy'] = vals.get('tour_policy', 'manual')
@@ -227,7 +184,9 @@ class tour_folio(osv.osv):
         return  self.pool.get('sale.order').onchange_shop_id(cr, uid, ids, shop_id)
 
     def onchange_partner_id(self, cr, uid, ids, part, context=None):
-        a =  self.pool.get('sale.order').onchange_partner_id(cr, uid, ids, part)
+        if context is None:
+            context = {}
+        a = self.pool.get('sale.order').onchange_partner_id(cr, uid, ids, part, context)
         return a
 
 
@@ -258,6 +217,7 @@ class tour_folio(osv.osv):
                 self.pool.get('sale.order.line').write(cr, uid, [line.id], {'invoiced': invoiced})
         self.write(cr, uid, ids, {'state':'invoice_except', 'invoice_id':False})
         return res
+
     def action_cancel(self, cr, uid, ids, context={}):
         c = self.pool.get('sale.order').action_cancel(cr, uid, ids, context={})
         ok = True
@@ -315,7 +275,7 @@ class tour_folio(osv.osv):
 
 
 
-class tour_folio_line(osv.osv):
+class tour_folio_line(models.Model):
 
     def copy(self, cr, uid, id, default=None, context={}):
         return  self.pool.get('sale.order.line').copy(cr, uid, id, default=None, context={})
@@ -339,23 +299,14 @@ class tour_folio_line(osv.osv):
     _name = 'tour_folio.line'
     _description = 'tour folio line'
     _inherits = {'sale.order.line':'order_line_id'}
-    _columns = {
-          'order_line_id':fields.many2one('sale.order.line', 'order_line_id', required=True, ondelete='cascade'),
-          'folio_id':fields.many2one('tour.folio', 'folio_id', ondelete='cascade'),
-          'arrival_date': fields.datetime('Arrival', required=True),
-          'departure_date': fields.datetime('Departure', required=True),
-          'option_date': fields.date('Option Date', required=True),
-          'deposit_date': fields.date('Deposit Date', required=True),
-          'balance_date': fields.date('Balance Date', required=True),
 
-
-
-    }
-    _defaults = {
-       'arrival_date':_get_arrival_date,
-       'departure_date':_get_departure_date,
-
-    }
+    order_line_id=fields.Many2one('sale.order.line', 'order_line_id', required=True, ondelete='cascade')
+    folio_id=fields.Many2one('tour.folio', 'folio_id', ondelete='cascade')
+    arrival_date = fields.Datetime('Arrival', default=_get_arrival_date, required=True)
+    departure_date = fields.Datetime('Departure', default=_get_arrival_date, required=True)
+    option_date = fields.Date('Option Date', required=True)
+    deposit_date = fields.Date('Deposit Date', required=True)
+    balance_date = fields.Date('Balance Date', required=True)
 
     def create(self, cr, uid, vals, context=None, check=True):
         if not context:
@@ -411,19 +362,17 @@ class tour_folio_line(osv.osv):
     def copy(self, cr, uid, id, default=None, context={}):
         return  self.pool.get('sale.order.line').copy(cr, uid, id, default=None, context={})
 
-class folio_customer_payment(osv.Model):
+class folio_customer_payment(models.Model):
     _name = 'tour_folio.customerpayment'
     _description = 'Customer payment voucher and notification'
-    _columns = {
-        'name':fields.char('Memo', 256, help='Memo'),
-        'reference':fields.char('Reference', 64, help='Reference'),
-        'folio_id':fields.many2one('tour.folio', 'folio_id', ondelete='cascade'),
-        'payment_date': fields.date('Option Date', required=True),
-        'amount':fields.float('Amount', help='Amount of customer payment'),
-        'journal_id':fields.many2one('account.journal', 'Payment Method',
-            help='Use this payment method'),
 
-    }
+    name = fields.Char('Memo', help='Memo')
+    reference = fields.Char('Reference', help='Reference')
+    folio_id = fields.Many2one('tour.folio', 'folio_id', ondelete='cascade')
+    payment_date = fields.Date('Option Date', required=True)
+    amount = fields.Float('Amount', help='Amount of customer payment')
+    journal_id = fields.Many2one('account.journal', 'Payment Method',
+        help='Use this payment method')
 
     def create(self, cr, uid, vals, context=None, check=True):
         folio_customer_payment_id = super(folio_customer_payment,
@@ -463,12 +412,10 @@ class folio_customer_payment(osv.Model):
 
         return folio_customer_payment_id
 
-class account_voucher(osv.Model):
+class account_voucher(models.Model):
     _inherit = 'account.voucher'
-    _columns = {
-        'folio_id':fields.many2one('tour.folio', 'Folio'
-        , help='Referenced Folio'),
-    }
+    folio_id = fields.Many2one('tour.folio', 'Folio'
+        , help='Referenced Folio')
 
     def write(self, cr, uid, ids, vals, context=None):
         write_res = super(account_voucher, self).write(cr, uid, ids, vals, context=None)

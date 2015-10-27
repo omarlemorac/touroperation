@@ -35,7 +35,7 @@ tour operator or passenger.
     'website': 'http://www.accioma.com',
     'images' : [],
     'depends' : [
-        'base','l10n_ec_ifrs_minimal','tour_operation',"partner_firstname", "report_webkit",
+        'base','tour_operation',"partner_firstname", "report_webkit",
     ],
     'data': [
         'security/ir.model.access.csv',

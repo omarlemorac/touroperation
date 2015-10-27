@@ -2,8 +2,8 @@
 <openerp>
     <data>
         <!--====================================================
-						Airport
-		==================================================== -->
+			Airport
+	==================================================== -->
         <record model="touroperation.airport" id="gye_airport_data">
             <field name="name" >GYE</field>
             <field name="description" >Jose Joaquin de Olmedo</field>

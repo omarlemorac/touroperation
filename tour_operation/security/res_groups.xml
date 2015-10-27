@@ -5,5 +5,8 @@
             <field name="name">Tour Operation / Manager</field>
             <field name="implied_ids" eval="[(4, ref('base.group_sale_manager'))]"/>
         </record>
+        <record id="ato_group_user" model="res.groups">
+            <field name="name">Tour Operation / Manager</field>
+          </record>
     </data>
 </openerp>
