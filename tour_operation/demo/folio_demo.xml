@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<openerp>
+  <data>
+    <!-- ======================================================
+         Partner
+    ===================================================     -->
+    <record id="to_partner_01" model="res.partner">
+      <field name="firstname">Harry</field>
+      <field name="lastname">Potter</field>
+      <field name="is_company" eval="False" />
+      <field name="is_pax" eval="True" />
+      <field name="type_ced_ruc">ruc</field>
+      <field name="tipo_persona">6</field>
+      <field name="ced_ruc">1713310439001</field>
+    </record>
+    <record id="to_partner_02" model="res.partner">
+      <field name="name">Pansy</field>
+      <field name="is_company" eval="True" />
+      <field name="is_pax" eval="True" />
+      <field name="type_ced_ruc">ruc</field>
+      <field name="tipo_persona">6</field>
+      <field name="ced_ruc">1790016919001</field>
+    </record>
+    <!-- ======================================================
+         Folio
+    ===================================================     -->
+    <record id="to_folio_01" model="tour.folio" >
+      <field name="name">/PotterX3</field>
+      <field name="arrival_date">2020-11-02</field>
+      <field name="departure_date">2020-11-15</field>
+      <field name="confirm_date">2020-10-10</field>
+      <field name="partner_id" ref="to_partner_01" />
+      <field name="partner_invoice_id" ref="to_partner_01"/>
+      <field name="partner_shipping_id" ref="to_partner_01"/>
+      <!--
+      <field name="shop_id" ref="sale.sale_shop_1"/>
+      -->
+      <field name="user_id" ref="base.user_demo"/>
+      <field name="pricelist_id" ref="product.list0"/>
+    </record>
+    <record id="to_folio_02" model="tour.folio" >
+      <field name="name">/DourselyX4</field>
+      <field name="arrival_date">2020-11-02</field>
+      <field name="departure_date">2020-11-15</field>
+      <field name="confirm_date">2020-10-10</field>
+      <field name="partner_id" ref="to_partner_02" />
+      <field name="partner_invoice_id" ref="to_partner_02"/>
+      <field name="partner_shipping_id" ref="to_partner_02"/>
+      <field name="user_id" ref="base.user_demo"/>
+      <field name="pricelist_id" ref="product.list0"/>
+    </record>
+    <record id="to_folio_03" model="tour.folio" >
+      <field name="name">/HedwigX6</field>
+      <field name="arrival_date">2020-11-02</field>
+      <field name="departure_date">2020-11-15</field>
+      <field name="confirm_date">2020-10-10</field>
+      <field name="partner_id" ref="to_partner_01" />
+      <field name="partner_invoice_id" ref="to_partner_01"/>
+      <field name="partner_shipping_id" ref="to_partner_01"/>
+      <field name="user_id" ref="base.user_demo"/>
+      <field name="pricelist_id" ref="product.list0"/>
+    </record>
+  </data>
+</openerp>
+

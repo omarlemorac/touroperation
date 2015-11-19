@@ -127,8 +127,7 @@ class tour_folio(models.Model):
       , help='Deadline of fully paid service ')
     payment_notes = fields.Text('Payment Notes')
     folio_v_customer_payment_ids = fields.One2many('account.voucher', 'folio_id'
-          , 'Advance Payments', help='Advance payments for this folio', readonly = True)
-
+          , 'Advance Payments', help='Advance payments for this folio', readonly=True)
     sch_confirm_date = fields.Date(compute="_sch_confirm_date"
           , string='Scheduled Option Date')
     sch_payment_date = fields.Date(compute="sch_payment_date_fcn"
@@ -147,7 +146,7 @@ class tour_folio(models.Model):
     @api.one
     @api.constrains('arrival_date','departure_date')
     def check_in_out_date(self):
-        if self.arrival_date <= self.departure_date:
+        if self.arrival_date >= self.departure_date:
             raise exceptions.ValidationError(_("Check in Date Should be less than the Check Out Date!"))
 
     def name_get(self, cr, uid, ids, context=None):
@@ -287,6 +286,7 @@ class tour_folio_line(models.Model):
         return  self.pool.get('sale.order.line')._number_packages(cr, uid, ids, field_name, arg, context)
     def _get_1st_packaging(self, cr, uid, context={}):
         return  self.pool.get('sale.order.line')._get_1st_packaging(cr, uid, context={})
+    @api.one
     def _get_arrival_date(self, cr, uid, context={}):
         if 'arrival_date' in context:
             return context['arrival_date']
@@ -302,19 +302,20 @@ class tour_folio_line(models.Model):
 
     order_line_id=fields.Many2one('sale.order.line', 'order_line_id', required=True, ondelete='cascade')
     folio_id=fields.Many2one('tour.folio', 'folio_id', ondelete='cascade')
-    arrival_date = fields.Datetime('Arrival', default=_get_arrival_date, required=True)
-    departure_date = fields.Datetime('Departure', default=_get_arrival_date, required=True)
+    arrival_date = fields.Datetime('Arrival', default=_get_arrival_date,
+            required=False)
+    departure_date = fields.Datetime('Departure', default=_get_arrival_date,
+            required=False)
     option_date = fields.Date('Option Date', required=True)
     deposit_date = fields.Date('Deposit Date', required=True)
     balance_date = fields.Date('Balance Date', required=True)
 
-    def create(self, cr, uid, vals, context=None, check=True):
-        if not context:
-            context = {}
+    @api.model
+    def create(self, vals):
         if vals.has_key("folio_id"):
-            folio = self.pool.get("tour.folio").browse(cr, uid, [vals['folio_id']])[0]
+            folio = self.env["tour.folio"].browse([vals['folio_id']])[0]
             vals.update({'order_id':folio.order_id.id})
-        roomline = super(osv.osv, self).create(cr, uid, vals, context)
+        roomline = super(tour_folio_line, self).create(vals)
         return roomline
 
     def uos_change(self, cr, uid, ids, product_uos, product_uos_qty=0, product_id=None):
