@@ -18,6 +18,7 @@ _____________________________________________
     "data":["security/res_groups.xml",
             "security/ir.model.access.csv",
             "views/tour_operation_view.xml",
+            "views/partner_view.xml",
            ],
     "demo" : [
         #"demo/product_demo.xml",
