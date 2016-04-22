@@ -96,6 +96,7 @@
                     <field name="paid_date" />
                   </group>
                 </page>
+                <!--
                 <page string = "Curstomer Payments">
                   <field name="folio_uv_customer_payment_ids" widget="one2many_list" nolabel="1" >
                     <tree editable="bottom">
@@ -120,6 +121,7 @@
                   <div class="oe_clear"/>
                   <field name="payment_notes" class="oe_inline" placeholder="Payment notes..."/>
                 </page>
+                -->
               </notebook>
             </sheet>
             <div class="oe_chatter">
