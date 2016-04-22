@@ -19,8 +19,6 @@
 #
 ##############################################################################
 from openerp.osv import fields, osv
-import time
-import netsvc
 from openerp.tools.translate import _
 
 class partner(osv.Model):

@@ -49,7 +49,7 @@ tour operator or passenger.
     'css':[
     ],
     'demo': [
-        'demo/voucher_of_service.xml',
+ #       'demo/voucher_of_service.xml',
     ],
     'test': [
     ],

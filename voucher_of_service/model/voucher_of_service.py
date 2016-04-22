@@ -20,12 +20,11 @@
 ##############################################################################
 from openerp.osv import fields, osv
 import time
-import netsvc
 from openerp.tools.translate import _
+from openerp.tools import config
 #import ir
 from mx import DateTime
 import datetime
-from tools import config
 #import pdb
 
 class location(osv.Model):
