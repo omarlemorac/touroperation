@@ -52,8 +52,6 @@
                   <field name="departure_date"/>
                 </group>
                 <group name="sale_pay">
-                  <field name="payment_term" widget="selection"/>
-                  <field name="fiscal_position" widget="selection"/>
                   <field name="company_id" 
                     widget="selection" 
                     groups="base.group_multi_company"/>

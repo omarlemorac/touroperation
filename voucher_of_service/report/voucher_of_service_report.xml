@@ -3,9 +3,20 @@
     <data>
       <report id="voucherofservice_report"
           model="tour.voucherofservice"
-          name="tour.voucherofservice_report"
-          rml="voucher_of_service/report/voucher_of_service.mako"
-          string="Voucher Of Service"
-          report_type="webkit" />
+          name="voucher_of_service.voucherofservice_view"
+          string="Voucher of Service"
+          file="voucer_of_service.voucher_of_service"
+          report_type="qweb-pdf" />
+
+        <template id="voucher_of_service.voucherofservice_view">
+          <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+              <div class="page">
+                <h2 t-field="o.folio_id.name" />
+              </div>
+            </t>
+          </t>
+
+        </template>
     </data>
 </openerp>

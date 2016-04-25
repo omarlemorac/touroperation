@@ -17,8 +17,10 @@ _____________________________________________
     "author":"Accioma",
     "data":["security/res_groups.xml",
             "security/ir.model.access.csv",
+            "folio_report.xml",
             "views/tour_operation_view.xml",
             "views/partner_view.xml",
+            "views/report_folioinvoice.xml",
            ],
     "demo" : [
         #"demo/product_demo.xml",
