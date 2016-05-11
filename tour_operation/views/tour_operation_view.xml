@@ -2,6 +2,22 @@
 <openerp>
     <data>
       <!--========================================================
+                    Tour Folio Config
+      ========================================================-->
+      <record model="ir.ui.view" id="view_tour_folio_form">
+        <field name="name">tour.folio.config.form</field>
+        <field name="model">tour_folio.config</field>
+        <field name="arch" type="xml">
+          <form string="Folio" version="7.0">
+            <sheet>
+              <group>
+                <field name="note"  />
+              </group>
+            </sheet>
+          </form>
+        </field>
+      </record>
+      <!--========================================================
                     Tour Folio
       ========================================================-->
       <record model="ir.ui.view" id="view_tour_folio_tree">
@@ -88,10 +104,15 @@
                   <field name="note" class="oe_inline" placeholder="Terms and conditions..."/>
                 </page>
                 <page string="Deadlines">
-                  <group>
-                    <field name="confirm_date" />
-                    <field name="payment_date" />
-                    <field name="paid_date" />
+                  <group col="4"> 
+                    <group col="2">
+                      <field name="confirm_date"/>
+                      <field name="payment_date"/>
+                      <field name="paid_date"/>
+                    </group>
+                    <group col="2">
+                      <field name="percentage_of_deposit"/>
+                    </group>
                   </group>
                 </page>
                 <!--
@@ -150,11 +171,23 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
       </record>
-      <menuitem  id="menu_folio" name="Folio" parent="tour_operation.main_menu_touroperator" sequence="4"/>  			 
-		<menuitem name="Folio"
+      <record model="ir.actions.act_window" id="open_tour_folio_config_form">
+        <field name="name">Tour Folio</field>
+        <field name="res_model">tour_folio.config</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+      </record>
+      <menuitem  id="menu_folio" name="Folio" parent="tour_operation.main_menu_touroperator" sequence="40"/>  			 
+      <menuitem name="Folio"
 				  id="menu_tour_folio_form_tree_all"
 				  action="open_tour_folio_form_tree_all"
 				  sequence="5"
 				  parent ="menu_folio"/>			
+      <menuitem  id="menu_folio_config" name="Configuration" parent="tour_operation.main_menu_touroperator" sequence="60"/>  			 
+      <menuitem name="Configuration"
+				  id="menu_tour_folio_config"
+				  action="open_tour_folio_config_form"
+				  sequence="10"
+				  parent ="menu_folio_config"/>			
     </data>
 </openerp>

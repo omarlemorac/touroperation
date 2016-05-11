@@ -123,7 +123,7 @@ class tour_folio(models.Model):
       , help='Deadline for option')
     payment_date = fields.Date('Deposit Date', required=False
       , help='Deadline for deposit')
-    paid_date = fields.Date('Balance Date', required=False
+    paid_date = fields.Date('Balance Date', required=True
       , help='Deadline of fully paid service ')
     payment_notes = fields.Text('Payment Notes')
     folio_v_customer_payment_ids = fields.One2many('account.voucher', 'folio_id'
@@ -134,6 +134,8 @@ class tour_folio(models.Model):
           , string='Scheduled Deposit Date')
     sch_paid_date = fields.Date(compute="sch_paid_date_fcn"
           , string='Scheduled Balance Date')
+    percentage_of_deposit = fields.Float('Percentage of Deposit',
+            help='Percentage of first deposit')
     unverified_payment_amount_total = fields.Float(compute="_get_unverified_payment"
           , string='UV Payment', multi=True)
     unverified_outstanding_balance = fields.Float(compute="_get_unverified_payment"
@@ -142,6 +144,7 @@ class tour_folio(models.Model):
           , string='Verified Payment', multi=True)
     verified_outstanding_balance = fields.Float(compute="_get_unverified_payment"
           , string='Verified Balance', multi=True)
+
 
     @api.one
     @api.constrains('arrival_date','departure_date')
@@ -166,15 +169,28 @@ class tour_folio(models.Model):
             print duration_delta.days
             self.duration = duration_delta.days
 
-    def create(self, cr, uid, vals, context=None, check=True):
+    @api.model
+    def create(self, vals):
         vals['order_policy'] = vals.get('tour_policy', 'manual')
-        s = self.pool.get('ir.sequence').get(cr, uid, 'sale.order') or '/'
+        s = self.env['ir.sequence'].get('sale.order') or '/'
+        n = self.env['tour_folio.config'].browse(1)
         vals['name'] = "{}{}".format(s,vals['name'])
+        cd = time.strftime('%d %B %Y', time.strptime(vals['confirm_date'],
+            '%Y-%m-%d'))
+        bd = time.strftime('%d %B %Y', time.strptime(vals['paid_date'],
+            '%Y-%m-%d'))
         if not vals.has_key("folio_id"):
-            folio_id = super(tour_folio, self).create(cr, uid, vals, context)
-            super(tour_folio, self).write(cr, uid, [folio_id], vals, context)
+            folio_id = super(tour_folio, self).create(vals)
+            vals['note'] = n.note.format(
+                percentage_of_deposit = vals['percentage_of_deposit'],
+                amount_of_deposit = self.amount_total * \
+                    vals['percentage_of_deposit'] / 100,
+                confirm_date = cd,
+                balance_date = bd,
+                )
+            folio_id.write(vals)
         else:
-            folio_id = super(tour_folio, self).create(cr, uid, vals, context)
+            folio_id = super(tour_folio, self).create(vals)
 
         return folio_id
 
@@ -435,4 +451,13 @@ class account_voucher(models.Model):
                 folio_pool.write(cr, uid, [folio.id], {'state':'sent'})
 
         return write_res
+
+class folio_config(models.Model):
+    _name = 'tour_folio.config'
+
+    note = fields.Text('Note', help='Folio note configuration')
+
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+
+

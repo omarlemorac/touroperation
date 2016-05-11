@@ -33,3 +33,7 @@ class res_partner(models.Model):
 
     nationality_id = fields.Many2one('res.country', 'Nationality',
             help='Passenger nationality')
+
+    @api.onchange('lastname')
+    def onchange_lastname(self):
+        self.lastname = self.lastname.upper()
