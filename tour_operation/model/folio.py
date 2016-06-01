@@ -25,7 +25,7 @@ from openerp.tools.translate import _
 from datetime import datetime
 #import ir
 #from tools import config
-#import pdb
+import pdb
 
 
 class tour_folio(models.Model):
@@ -123,7 +123,7 @@ class tour_folio(models.Model):
       , help='Deadline for option')
     payment_date = fields.Date('Deposit Date', required=False
       , help='Deadline for deposit')
-    paid_date = fields.Date('Balance Date', required=True
+    paid_date = fields.Date('Balance Date', required=False
       , help='Deadline of fully paid service ')
     payment_notes = fields.Text('Payment Notes')
     folio_v_customer_payment_ids = fields.One2many('account.voucher', 'folio_id'
@@ -145,6 +145,14 @@ class tour_folio(models.Model):
     verified_outstanding_balance = fields.Float(compute="_get_unverified_payment"
           , string='Verified Balance', multi=True)
 
+
+    def print_quotation(self, cr, uid, ids, context=None):
+        '''
+        This function prints the sales order and mark it as sent, so that we can see more easily the next step of the workflow
+        '''
+        assert len(ids) == 1, 'This option should only be used for a single id at a time'
+        self.signal_workflow(cr, uid, ids, 'quotation_sent')
+        return self.pool['report'].get_action(cr, uid, ids, 'tour_operation.report_folio_invoice', context=context)
 
     @api.one
     @api.constrains('arrival_date','departure_date')
@@ -175,19 +183,33 @@ class tour_folio(models.Model):
         s = self.env['ir.sequence'].get('sale.order') or '/'
         n = self.env['tour_folio.config'].browse(1)
         vals['name'] = "{}{}".format(s,vals['name'])
-        cd = time.strftime('%d %B %Y', time.strptime(vals['confirm_date'],
-            '%Y-%m-%d'))
-        bd = time.strftime('%d %B %Y', time.strptime(vals['paid_date'],
-            '%Y-%m-%d'))
+        #folio = self.browse(cr, uid, ids[0], context = context)
+        cd = ""
+        if vals['payment_date']:
+            cd = time.strftime('%d %B %Y', time.strptime(vals['payment_date'],
+                '%Y-%m-%d'))
+        bd = ""
+        if vals['paid_date']:
+            bd = time.strftime('%d %B %Y', time.strptime(vals['paid_date'],
+                '%Y-%m-%d'))
+        pod = 0.0
+
+        if 'percentage_of_deposit' in vals.keys() and vals['percentage_of_deposit']:
+                pod = vals['percentage_of_deposit']
+        pob = 100.0 - pod
+
         if not vals.has_key("folio_id"):
             folio_id = super(tour_folio, self).create(vals)
             vals['note'] = n.note.format(
-                percentage_of_deposit = vals['percentage_of_deposit'],
-                amount_of_deposit = self.amount_total * \
-                    vals['percentage_of_deposit'] / 100,
-                confirm_date = cd,
-                balance_date = bd,
-                )
+                                         percentage_of_deposit = pod,
+                                         percentage_of_balance = 100 - pod,
+                                         amount_of_deposit = folio_id.amount_total * \
+                                             pod / 100,
+                                         amount_of_balance = folio_id.amount_total * \
+                                             pob / 100,
+                                         confirm_date = cd,
+                                         balance_date = bd,
+                                        )
             folio_id.write(vals)
         else:
             folio_id = super(tour_folio, self).create(vals)
@@ -289,6 +311,57 @@ class tour_folio(models.Model):
         return d
 
 
+    def action_button_confirm(self, cr, uid, ids, context=None):
+
+        assert len(ids) == 1, 'This option should only be used for a single id at a time.'
+        ir_model_data = self.pool.get('ir.model.data')
+        try:
+            wizard_id = ir_model_data.get_object_reference(cr, uid,
+                    'touroperation.confirm.wizard', 'tourfolio_wizard_confirm_view')[1]
+        except ValueError:
+            wizard_id = False
+
+        return {
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'tourfolio.confirm.wizard',
+            'views': [(wizard_id, 'form')],
+            'view_id': wizard_id,
+            'target': 'new',
+        }
+        #return super(tour_folio, self).write(cr, uid, ids, vals, context)
+
+
+    def write(self, cr, uid, ids, vals, context = None):
+        if not context:
+            context = {}
+        folio = self.browse(cr, uid, ids[0], context = context)
+        n = self.pool.get('tour_folio.config').browse(cr, uid, 1)
+        cd = ""
+        if 'payment_date' in vals.keys() and vals['payment_date']:
+            cd = time.strftime('%d %B %Y', time.strptime(vals['payment_date'],
+                '%Y-%m-%d'))
+        bd = ""
+        if 'paid_date' in vals.keys() and vals['paid_date']:
+            bd = time.strftime('%d %B %Y', time.strptime(vals['paid_date'],
+                '%Y-%m-%d'))
+        pod = 0.0
+        if 'percentage_of_deposit' in vals.keys() and vals['percentage_of_deposit']:
+                pod = vals['percentage_of_deposit']
+        pob = 100.0 - pod
+        #pdb.set_trace()
+        vals['note'] = n.note.format(
+            percentage_of_deposit = pod,
+            percentage_of_balance = 100 - pod,
+            amount_of_deposit = folio.amount_total * \
+                pod / 100,
+            amount_of_balance = folio.amount_total * \
+                pob / 100,
+            confirm_date = cd,
+            balance_date = bd,
+            )
+        return super(tour_folio, self).write(cr, uid, ids, vals, context)
 
 class tour_folio_line(models.Model):
 
@@ -322,9 +395,9 @@ class tour_folio_line(models.Model):
             required=False)
     departure_date = fields.Datetime('Departure', default=_get_arrival_date,
             required=False)
-    option_date = fields.Date('Option Date', required=True)
-    deposit_date = fields.Date('Deposit Date', required=True)
-    balance_date = fields.Date('Balance Date', required=True)
+    option_date = fields.Date('Option Date', required=True, default=time.strftime('%Y-%m-%d %H:%M:%S'))
+    deposit_date = fields.Date('Deposit Date', required=True, default=time.strftime('%Y-%m-%d %H:%M:%S'))
+    balance_date = fields.Date('Balance Date', required=True, default=time.strftime('%Y-%m-%d %H:%M:%S'))
 
     @api.model
     def create(self, vals):
@@ -457,7 +530,13 @@ class folio_config(models.Model):
 
     note = fields.Text('Note', help='Folio note configuration')
 
+class TourFolioConfirmWizard(models.TransientModel):
+    _name = "tourfolio.confirm.wizard"
+
+    deposit_date = fields.Date('Deposit Date', required=True, help='Deposit date')
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+
 
 
