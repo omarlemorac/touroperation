@@ -180,9 +180,10 @@
           <form version="7.0">
             <group col="2" colspan="2">
               <field name="deposit_date" colspan="2" />
+              <field name="deposit_percentage" colspan="2" />
             </group>
             <footer>
-              <button name="confirm" type="object"
+              <button name="action_confirm" type="object"
                     string="Confirm" class="oe_highlight"/>
                         or
               <button special="cancel" string="Cancel" class="oe_link"/>

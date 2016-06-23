@@ -27,6 +27,6 @@ _____________________________________________
         "demo/folio_demo.xml",
         ],
 
-    "depends":["base", "sale", "partner_firstname", "l10n_ec_advances"],
+    "depends":["base", "sale", "partner_firstname", "l10n_ec_advances", "mail"],
     "installable":True
 }

@@ -25,7 +25,7 @@ from openerp.tools.translate import _
 from datetime import datetime
 #import ir
 #from tools import config
-import pdb
+#import pdb
 
 
 class tour_folio(models.Model):
@@ -152,7 +152,7 @@ class tour_folio(models.Model):
         '''
         assert len(ids) == 1, 'This option should only be used for a single id at a time'
         self.signal_workflow(cr, uid, ids, 'quotation_sent')
-        return self.pool['report'].get_action(cr, uid, ids, 'tour_operation.report_folio_invoice', context=context)
+        return self.pool['report'].get_action(cr, uid, ids, 'tour_operation.report_invoice', context=context)
 
     @api.one
     @api.constrains('arrival_date','departure_date')
@@ -312,6 +312,11 @@ class tour_folio(models.Model):
 
 
     def action_button_confirm(self, cr, uid, ids, context=None):
+        if context is None:
+            context = {}
+
+        if context.get('active_model') != self._name:
+            context.update(active_ids=ids, active_model=self._name)
 
         assert len(ids) == 1, 'This option should only be used for a single id at a time.'
         ir_model_data = self.pool.get('ir.model.data')
@@ -329,6 +334,7 @@ class tour_folio(models.Model):
             'views': [(wizard_id, 'form')],
             'view_id': wizard_id,
             'target': 'new',
+            'context': context,
         }
         #return super(tour_folio, self).write(cr, uid, ids, vals, context)
 
@@ -351,7 +357,8 @@ class tour_folio(models.Model):
                 pod = vals['percentage_of_deposit']
         pob = 100.0 - pod
         #pdb.set_trace()
-        vals['note'] = n.note.format(
+        try:
+            vals['note'] = n.note.format(
             percentage_of_deposit = pod,
             percentage_of_balance = 100 - pod,
             amount_of_deposit = folio.amount_total * \
@@ -361,6 +368,9 @@ class tour_folio(models.Model):
             confirm_date = cd,
             balance_date = bd,
             )
+        except:
+            pass
+
         return super(tour_folio, self).write(cr, uid, ids, vals, context)
 
 class tour_folio_line(models.Model):
@@ -534,9 +544,31 @@ class TourFolioConfirmWizard(models.TransientModel):
     _name = "tourfolio.confirm.wizard"
 
     deposit_date = fields.Date('Deposit Date', required=True, help='Deposit date')
+    deposit_percentage = fields.Float('Percentage', required=True,
+            help='Deposit Percentage')
+
+    @api.multi
+    def action_confirm_old(self):
+
+        folio = self.env['tour.folio'].browse(self._context['active_id'])
+        #pdb.set_trace()
+        folio.percentage_of_deposit = self.deposit_percentage
+        folio.payment_date = self.deposit_date
+        return True
+
+#        for o in self.browse(cr, uid, ids, context=context):
+#            folio_obj.write(cr, uid, [context['active_id']],
+#                        {'percentage_of_deposit': o.deposit_percentage,
+#                         'payment_date': o.deposit_date,
+#                         'state': 'draft'})
 
 
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
+    @api.multi
+    def action_confirm(self):
 
-
-
+        folio_obj = self.env['tour.folio'].browse(self._context['active_id'])
+        #pdb.set_trace()
+        folio_obj.write({'percentage_of_deposit': self.deposit_percentage,
+                         'payment_date': self.deposit_date,
+                         'state': 'sent'})
+        return True

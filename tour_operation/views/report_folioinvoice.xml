@@ -5,9 +5,6 @@
     <t t-call="report.external_layout">
         <div class="page">
             <div class="oe_structure"/>
-
-            <div class="row" style="height: 2em;">XXXXXX</div>
-            <div class="row">ZZZZZ</div>
             <div class="row">
               <div class="col-xs-5 col-xs-offset-1">
                 <div t-field="o.partner_id"
