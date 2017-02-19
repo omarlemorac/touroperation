@@ -19,11 +19,11 @@
 #
 ##############################################################################
 {
-    'name' : 'Voucher of Service',
-    'version' : '7.0',
-    'author' : 'Accioma',
-    'category' : 'Tour Operation',
-    'description' : """
+    'name': 'Voucher of Service',
+    'version': '8.0.1',
+    'author': 'Accioma',
+    'category': 'Tour Operation',
+    'description': """
 ================================
 Voucher of Service
 ================================
@@ -33,9 +33,9 @@ tour operator or passenger.
 
     """,
     'website': 'http://www.accioma.com',
-    'images' : [],
-    'depends' : [
-        'base','tour_operation',"partner_firstname", "report_webkit",
+    'images': [],
+    'depends': [
+        'base', 'tour_operation', "partner_firstname", "report_webkit",
     ],
     'data': [
         'security/ir.model.access.csv',

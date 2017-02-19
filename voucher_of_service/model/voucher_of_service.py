@@ -18,123 +18,125 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ##############################################################################
-from openerp.osv import fields, osv
-import time
-from openerp.tools.translate import _
-from openerp.tools import config
+from openerp import fields, models
+#from openerp.tools.translate import _
+#from openerp.tools import config
 #import ir
-from mx import DateTime
-import datetime
 #import pdb
 
-class location(osv.Model):
+
+class Location(models.Model):
+    """Location of Voucher Of Service"""
     _description = """
     Tour location
     """
     _name = "tour.location"
-    _columns = {
-        'name':fields.char('Name', 255, help='Location name'),
-        'description':fields.char('Description', 255, help='Location description'),
-    }
+    name = fields.Char('Name', required=True, help='Name')
+    description = fields.Char('Description', required=True, help='Description')
+    lat = fields.Float('Latitude', digits=(9, 6), help='Latitude')
+    lng = fields.Float('Longitude', digits=(9, 6), help='Longitude')
 
-class visit_point(osv.Model):
+
+class VisitPoint(models.Model):
+    """Visit point to be used in itinerary"""
     _description = """
     Tour visit point
     """
     _name = "tour.visit_point"
-    _columns={
-        'name':fields.char('Name', 255, help='Visit poin name'),
-        'location_id':fields.many2one('tour.location', 'Location'
-            , help='Visit point location'),
-        'description':fields.char('Description', 255, help='Location description'),
-    }
+    name = fields.Char('Name', help='Visit point name')
+    location_id = fields.Many2one('tour.location', 'Location', help='Location')
+    description = fields.Char('Description', help='Description')
 
-class voucher_of_service(osv.Model):
+
+class VoucherOfService(models.Model):
+    """Voucher of Service"""
     _description = """
     Voucher of service
     """
-    _name="tour.voucherofservice"
-    _columns={
-        'name':fields.char('Name', 255, help='Name of Voucher of Service'),
-        'folio_id':fields.many2one('tour.folio', 'Folio', help='fields help'),
-        'passenger_ids':fields.many2many('res.partner',
-            'voucherofservice_partner_rel', 'voucherofservice_id',
-            'passenger_id', 'Passengers', help='Passengers List'),
-        'overnight_ids':fields.one2many('tour.vos_itinerary_overnight'
-            , 'voucherofservice_id', 'Visit Points'
-            , help='Visit points'),
-        'included':fields.text('Included', help='Included items'),
-        'excluded':fields.text('Excluded', help='Excluded items'),
-        'important_notes':fields.text('Important Notes'
-            , help="""Explain the recipient of this document what needs to be
-            taken in account so he will be correctly informed.   """),
-        'ib_ap_dep_id':fields.many2one('touroperation.airport'
-            , 'Departure Airport Inbound'
-            , help='Select departure airport inbound'),
-        'ib_ap_arr_id':fields.many2one('touroperation.airport'
-            , 'Arrival Airport Inbound'
-            , help='Select arrival airport inbound'),
-        'ib_time_dep':fields.datetime('Departure Inbound Time'),
-        'ib_time_arr':fields.datetime('Arrival Inbound Time'),
-        'ib_airline_id':fields.many2one('touroperation.airline'
-            , 'Departure Airline Inbound'
-            , help='Select inbound departure airline'),
-        'ib_flight_no':fields.char('Inbound Flight Number'
-            , help='Inbound Flight Number'),
-        'ob_ap_dep_id':fields.many2one('touroperation.airport'
-            , 'Departure Airport Outbound'
-            , help='Select outbound departure airport'),
-        'ob_ap_arr_id':fields.many2one('touroperation.airport'
-            , 'Arrival Airport Outbound'
-            , help='Select arrival airport outbound'),
-        'ob_time_dep':fields.datetime('Departure Outbound Time'),
-        'ob_time_arr':fields.datetime('Arrival Outbound Time'),
-        'ob_airline_id':fields.many2one('touroperation.airline'
-            , 'Departure Airline Outbound'
-            , help='Select departure outbound airline'),
-        'ob_flight_no':fields.char('Outbound Flight Number'
-            , help='outbound Flight Number'),
-        'hotel_contact':fields.text('Emergency Phones', help="""Provide
-            information about hotel and contacts."""),
-        'emergency_phones':fields.char('Emergency Phones', help='Emergency Phones'),
-    }
+    _name = "tour.voucherofservice"
+    name = fields.Char('Name', help='Name of Voucher of Service')
+    folio_id = fields.Many2one('tour.folio', 'Folio', help='fields help')
+    passenger_ids = fields.Many2many('res.partner',
+                                     'voucherofservice_partner_rel',
+                                     'voucherofservice_id',
+                                     'passenger_id', 'Passengers',
+                                     help='Passengers List')
+    overnight_ids = fields.One2many('tour.vos_itinerary_overnight',
+                                    'voucherofservice_id',
+                                    'Visit Points', help='Visit points')
+    included = fields.Text('Included', help='Included items')
+    excluded = fields.Text('Excluded', help='Excluded items')
+    important_notes = fields.Text('Important Notes',
+                                  help="""Explain the recipient of this document
+                                  what needs to be taken in account so he will
+                                  be correctly informed.""")
+    ib_ap_dep_id = fields.Many2one('touroperation.airport',
+                                   'Departure Airport Inbound',
+                                   help='Select departure airport inbound')
+    ib_ap_arr_id = fields.Many2one('touroperation.airport',
+                                   'Arrival Airport Inbound',
+                                   help='Select arrival airport inbound')
+    ib_time_dep = fields.Datetime('Departure Inbound Time')
+    ib_time_arr = fields.Datetime('Arrival Inbound Time')
+    ib_airline_id = fields.Many2one('touroperation.airline',
+                                    'Departure Airline Inbound',
+                                    help='Select inbound departure airline')
+    ib_flight_no = fields.Char('Inbound Flight Number',
+                               help='Inbound Flight Number')
+    ob_ap_dep_id = fields.Many2one('touroperation.airport',
+                                   'Departure Airport Outbound',
+                                   help='Select outbound departure airport')
+    ob_ap_arr_id = fields.Many2one('touroperation.airport',
+                                   'Arrival Airport Outbound',
+                                   help='Select arrival airport outbound')
+    ob_time_dep = fields.Datetime('Departure Outbound Time')
+    ob_time_arr = fields.Datetime('Arrival Outbound Time')
+    ob_airline_id = fields.Many2one('touroperation.airline',
+                                    'Departure Airline Outbound',
+                                    help='Select departure outbound airline')
+    ob_flight_no = fields.Char('Outbound Flight Number',
+                               help='outbound Flight Number')
+    hotel_contact = fields.Text('Emergency Phones', help="""Provide
+        information about hotel and contacts.""")
+    emergency_phones = fields.Char('Emergency Phones', help='Emergency Phones')
 
-class voucherofservice_itinerary_overnight(osv.Model):
-    _description="""
+
+class ItineraryOvernight(models.Model):
+    """Voucher of Service Overnight"""
+    _description = """
     Overnight for itinerary
     """
-    _name='tour.vos_itinerary_overnight'
-    _columns={
-        'sequence':fields.integer('Sequence',
-        help='Sequence for sort visit points.'),
-        'voucherofservice_id':fields.many2one('tour.voucherofservice',
-            'Voucher Of Service', help='Voucher of service'),
-        'visitpoint_ids':fields.one2many('tour.vos_visitpoint'
-            , 'overnight_id', 'Visit Points', help='Visit Points on ititnerary'),
-        'visitpoint_id':fields.many2one('tour.visit_point', 'Location'),
-        "date" : fields.date("Date", help="Location of overnight place"),
-    }
+    _name = 'tour.vos_itinerary_overnight'
     _order = 'sequence'
+    sequence = fields.Integer('Sequence',
+                              help='Sequence for sort visit points.')
+    voucherofservice_id = fields.Many2one('tour.voucherofservice',
+                                          'Voucher Of Service',
+                                          help='Voucher of service')
+    visitpoint_ids = fields.One2many('tour.vos_visitpoint',
+                                     'overnight_id',
+                                     'Visit Points',
+                                     help='Visit Points on ititnerary')
+    visitpoint_id = fields.Many2one('tour.visit_point', 'Location')
+    date = fields.Date("Date", help="Location of overnight place")
 
-class voucherofservice_itinerary_visitpoint(osv.Model):
-    _description="""
-    Visit point of ititnerary depends of overnight.
+
+class ItineraryVisitpoint(models.Model):
+    """Voucher of Service Visit Point"""
+    _description = """ Visit point of ititnerary """
+    _name = "tour.vos_visitpoint"
+    overnight_id = fields.Many2one('tour.vos_itinerary_overnight',
+                                   'Overnight', help='Overnight')
+    hour = fields.Char('Hour', help='Hour of visit')
+    breakfast = fields.Boolean('Breakfast', help='Is breakfast offered?')
+    lunch = fields.Boolean('Lunch', help='Is lunch offered?')
+    dinner = fields.Boolean('Dinner', help='Is dinner offered?')
+    visitpoint_id = fields.Many2one('tour.visit_point', 'Visit Point',
+                                    help='Visit point')
     """
-    _name="tour.vos_visitpoint"
-    _columns={
-        'overnight_id':fields.many2one('tour.vos_itinerary_overnight'
-            , 'Overnight', help='Overnight'),
-        'hour':fields.char('Hour', 10, help='Hour of visit'),
-        'breakfast':fields.boolean('Breakfast', help='Is breakfast offered?'),
-        'lunch':fields.boolean('Lunch', help='Is lunch offered?'),
-        'dinner':fields.boolean('Dinner', help='Is dinner offered?'),
-        'visitpoint_id':fields.many2one('tour.visit_point', 'Visit Point',
-            help='Visit point'),
-        'location_id':fields.related('visitpoint_id', 'location_id',
-            string='Location', readonly='True', type='many2one',
-            relation='tour.location'
-            , help='Location of visit point'),
-        'note':fields.char('Note', 255, help='Useful note'),
-
-
-    }
+    location_id = fields.Related('visitpoint_id', 'location_id',
+        string='Location',
+        readonly='True', type='many2one', relation='tour.location'
+        , help='Location of visit point')
+    """
+    note = fields.Char('Note', help='Useful note')
